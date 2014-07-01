@@ -1,6 +1,10 @@
 'use strict';
 
+var fs = fs = require('fs');
+
 module.exports = {
+    key: fs.readFileSync('privatekey.pem'),
+    cert: fs.readFileSync('certificate.pem'),
     db: 'mongodb://localhost/mean-dev',
     app: {
         name: 'MEAN - FullStack JS - Development'

@@ -4,6 +4,8 @@
 var _ = require('lodash'),
     fs = require('fs');
 
+
+
 // Load configurations
 // Set the node environment variable if not set before
 process.env.NODE_ENV = ~fs.readdirSync('./server/config/env').map(function(file) {

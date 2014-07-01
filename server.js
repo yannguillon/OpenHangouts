@@ -5,7 +5,8 @@
  */
 var mongoose = require('mongoose'),
     passport = require('passport'),
-    logger = require('mean-logger');
+    logger = require('mean-logger'),
+    https = require('https');
 
 /**
  * Main application entry file.
@@ -23,7 +24,7 @@ var app = require('./server/config/system/bootstrap')(passport, db);
 
 // Start the app by listening on <port>, optional hostname
 conn.once('open', function() {
-    app.listen(config.port, config.hostname);
+    https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
     console.log('MEAN app started on port ' + config.port + ' (' + process.env.NODE_ENV + ')');
 
     // Initializing logger
@@ -32,3 +33,5 @@ conn.once('open', function() {
 
 // Expose app
 exports = module.exports = app;
+
+
