@@ -1,5 +1,6 @@
-# [![MEAN Logo](http://www.mean.io/img/logos/meanlogo.png)](http://mean.io/) MEAN Stack
-# [![WebRTC Logo](http://cdn.sixrevisions.com/0370-01_webrtc_logo_thumbnail.png)](http://www.webrtc.org/) WebRTC
+# [![MEAN Logo](http://www.mean.io/img/logos/meanlogo.png)](http://mean.io/)
+# [![WebRTC Logo](http://www.webrtc.org/_/rsrc/1318870658554/config/customLogo.gif?revision=8)](http://www.webrtc.org/)
+# [![RTCMultiConnection Logo](http://www.rtcmulticonnection.org/images/logo.png)](http://www.rtcmulticonnection.org/)
 
 ## License
 [The MIT License](http://opensource.org/licenses/MIT)
