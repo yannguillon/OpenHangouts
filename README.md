@@ -9,6 +9,6 @@ Installation
 ```sh
 export NODE_PRIVATEKEY_PATH='path_to_privatekey.pem'
 export NODE_CERTIFICATE_PATH='path_to_certificate.pem'
-
-```## License
+```
+## License
 [The MIT License](http://opensource.org/licenses/MIT)
