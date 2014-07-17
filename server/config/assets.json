@@ -23,7 +23,8 @@
                 "public/*/*.js",
                 "public/*/{controllers,routes,services}/*.js",
                 "packages/*/public/{controllers,routes,services}/*.js",
-                "public/system/lib/angular-socket-io/socket.js"
+                "public/system/lib/angular-socket-io/socket.js",
+                "public/system/assets/js/socket.io.js"
             ]
         }
     }
