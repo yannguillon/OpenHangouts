@@ -12,13 +12,13 @@ var hasAuthorization = function(req, res, next) {
 
 module.exports = function(Articles, app, auth) {
 
-    app.route('/articles')
-        .get(articles.all)
-        .post(auth.requiresLogin, articles.create);
-    app.route('/articles/:articleId')
-        .get(articles.show)
-        .put(auth.requiresLogin, hasAuthorization, articles.update)
-        .delete(auth.requiresLogin, hasAuthorization, articles.destroy);
+//    app.io.route('/articles')
+//        .get(articles.all)
+//        .post(auth.requiresLogin, articles.create);
+//    app.io.route('/articles/:articleId')
+//        .get(articles.show)
+//        .put(auth.requiresLogin, hasAuthorization, articles.update)
+//        .delete(auth.requiresLogin, hasAuthorization, articles.destroy);
 
     // Finish with setting up the articleId param
     app.param('articleId', articles.article);

@@ -20,12 +20,24 @@ var conn = mongoose.connection;
 conn.on('error', console.log.bind(console, '**Could not connect to MongoDB. Please ensure mongod is running and restart MEAN app.**\n'));
 
 // Bootstrap Models, Dependencies, Routes and the app as an express app
-var app = require('./server/config/system/bootstrap')(passport, db);
+var boot = require('./server/config/system/bootstrap')(passport, db);
+var app = boot['app'];
+var socket = boot['socket'];
 
 // Start the app by listening on <port>, optional hostname
 conn.once('open', function() {
-    https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
+
+//    app.https({key: config.key, cert: config.cert}).listen(config.port, config.hostname);
+    var s = https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
+    var io = socket.listen(s);
     console.log('MEAN app started on port ' + config.port + ' (' + process.env.NODE_ENV + ')');
+//    io.on('connection', function(socket) {
+//        console.log('socket IO connected');
+//
+//        socket.on('message', function(message) {
+//            io.sockets.emit('message', message);
+//        });
+//    });
 
     // Initializing logger
     logger.init(app, passport, mongoose);
@@ -33,5 +45,3 @@ conn.once('open', function() {
 
 // Expose app
 exports = module.exports = app;
-
-

@@ -1,7 +1,8 @@
 'use strict';
 
 var express = require('express'),
-    appPath = process.cwd();
+    appPath = process.cwd(),
+    io      = require('socket.io');
 
 var mean = require('meanio');
 mean.app('Mean Demo App', {});
@@ -46,7 +47,9 @@ module.exports = function(passport, db) {
 
     // Express settings
     var app = express();
+    var socket = io();
+    require(appPath + '/server/config/socket')(socket);
     require(appPath + '/server/config/express')(app, passport, db);
 
-    return app;
+    return {'app' : app, 'socket' : socket};
 };

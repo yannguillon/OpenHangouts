@@ -1,7 +1,14 @@
 {% for file in assets.core.js %}
     <script type="text/javascript" src="/{{file}}"></script>
-{% endfor %}
 
+{% endfor %}
+<script>
+    var socket = io();
+    socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+    });
+</script>
 <!--{% if (process.env.NODE_ENV == 'development') %}-->
     <!--&lt;!&ndash; Livereload script rendered &ndash;&gt;-->
     <!--<script type="text/javascript" src="{{'http://' + req.host + ':35729/livereload.js'}}"></script>-->
