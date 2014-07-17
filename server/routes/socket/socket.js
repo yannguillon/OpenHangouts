@@ -1,6 +1,6 @@
 'use strict';
 
-var mean = require('meanio');
+//var mean = require('meanio');
 
 module.exports = function(io) {
 
@@ -10,5 +10,5 @@ module.exports = function(io) {
         socket.on('my other event', function (data) {
             console.log(data);
         });
-    })
+    });
 };

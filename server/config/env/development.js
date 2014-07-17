@@ -1,7 +1,7 @@
 'use strict';
 
-var fs = fs = require('fs');
-var dotenv = require('dotenv');
+var fs = require('fs'),
+    dotenv = require('dotenv');
 dotenv.load();
 module.exports = {
     key: fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH),

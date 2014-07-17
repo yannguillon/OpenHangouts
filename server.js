@@ -21,15 +21,15 @@ conn.on('error', console.log.bind(console, '**Could not connect to MongoDB. Plea
 
 // Bootstrap Models, Dependencies, Routes and the app as an express app
 var boot = require('./server/config/system/bootstrap')(passport, db);
-var app = boot['app'];
-var socket = boot['socket'];
+var app = boot.app;
+var socket = boot.socket;
 
 // Start the app by listening on <port>, optional hostname
 conn.once('open', function() {
 
 //    app.https({key: config.key, cert: config.cert}).listen(config.port, config.hostname);
     var s = https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
-    var io = socket.listen(s);
+    socket.listen(s);
     console.log('MEAN app started on port ' + config.port + ' (' + process.env.NODE_ENV + ')');
 //    io.on('connection', function(socket) {
 //        console.log('socket IO connected');
