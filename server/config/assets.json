@@ -11,7 +11,6 @@
                 "public/system/lib/jquery/dist/jquery.min.js",
                 "public/system/lib/socket.io/socket.io.js",
                 "public/system/lib/angular/angular.js",
-                "public/system/lib/firebase/firebase.js",
                 "public/system/lib/angular-mocks/angular-mocks.js",
                 "public/system/lib/angular-cookies/angular-cookies.js",
                 "public/system/lib/angular-resource/angular-resource.js",
@@ -23,8 +22,7 @@
                 "public/*/*.js",
                 "public/*/{controllers,routes,services}/*.js",
                 "packages/*/public/{controllers,routes,services}/*.js",
-                "public/system/lib/angular-socket-io/socket.js",
-                "public/system/assets/js/socket.io.js"
+                "public/system/lib/angular-socket-io/socket.js"
             ]
         }
     }

@@ -51,15 +51,12 @@ module.exports = function(io) {
 //        origins: '*:*'
 //    });
 //
-//    io.set('transports', [
-//        // 'websocket',
-//        'xhr-polling',
-//        'jsonp-polling'
-//    ]);
+
 
     var channels = {};
 
     io.on('connection', function (socket) {
+        console.log("connected");
         var initiatorChannel = '';
         if (!io.isConnected) {
             io.isConnected = true;
@@ -112,7 +109,4 @@ module.exports = function(io) {
             });
         });
     }
-
-
-
 };

@@ -2,18 +2,19 @@
     <script type="text/javascript" src="/{{file}}"></script>
 
 {% endfor %}
+<script src="//www.rtcmulticonnection.org/latest.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
-//    var socket = io();
-//    socket.on('news', function (data) {
-//        console.log(data);
-//        socket.emit('my other event', { my: 'data' });
-//    });
+    //    var socket = io.connect("https://localhost:3000");
+    //    socket.on('news', function (data) {
+    //        console.log(data);
+    //        socket.emit('my other event', { my: 'data' });
+    //    });
 </script>
 <!--{% if (process.env.NODE_ENV == 'development') %}-->
-    <!--&lt;!&ndash; Livereload script rendered &ndash;&gt;-->
-    <!--<script type="text/javascript" src="{{'http://' + req.host + ':35729/livereload.js'}}"></script>-->
+<!--&lt;!&ndash; Livereload script rendered &ndash;&gt;-->
+<!--<script type="text/javascript" src="{{'http://' + req.host + ':35729/livereload.js'}}"></script>-->
 <!--{% endif %}-->
 
 
 
-<script src="//www.rtcmulticonnection.org/latest.js"></script>
