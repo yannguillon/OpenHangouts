@@ -56,7 +56,7 @@ module.exports = function(io) {
     var channels = {};
 
     io.on('connection', function (socket) {
-        console.log("connected");
+        console.log('connected');
         var initiatorChannel = '';
         if (!io.isConnected) {
             io.isConnected = true;
