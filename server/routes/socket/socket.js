@@ -88,6 +88,7 @@ module.exports = function(io) {
     });
 
     function onNewNamespace(channel, sender) {
+        console.log(sender);
         io.of('/' + channel).on('connection', function (socket) {
             var username;
             if (io.isConnected) {
