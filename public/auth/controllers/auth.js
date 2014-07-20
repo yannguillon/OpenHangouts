@@ -2,7 +2,7 @@
 
 angular.module('mean.controllers.login', [])
     .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$location',
-        function($scope, $rootScope, $http, $location) {
+        function($scope, $rootScope, $http, $location, $route) {
             // This object will be filled by the form
             $scope.user = {};
 
@@ -25,7 +25,8 @@ angular.module('mean.controllers.login', [])
                                 window.location = response.redirect;
                             }
                         } else {
-                            $location.url('/');
+                            console.log('passe par la ');
+                            window.location = '/';
                         }
                     })
                     .error(function() {
@@ -53,7 +54,7 @@ angular.module('mean.controllers.login', [])
                         $scope.registerError = 0;
                         $rootScope.user = $scope.user;
                         $rootScope.$emit('loggedin');
-                        $location.url('/');
+                        $location.url('/dashboard');
                     })
                     .error(function(error) {
                         // Error: authentication failed
