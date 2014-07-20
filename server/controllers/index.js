@@ -18,7 +18,6 @@ exports.render = function(req, res) {
     function isAdmin() {
         return req.user && req.user.roles.indexOf('admin') !== -1;
     }
-
     // Send some basic starting info to the view
     res.render('index', {
         user: req.user ? {

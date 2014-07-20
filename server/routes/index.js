@@ -6,5 +6,7 @@ module.exports = function(app) {
 
     app.route('/')
         .get(index.render);
+    app.route('/dashboard')
+        .get(index.render);
 
 };
