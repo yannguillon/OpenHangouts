@@ -3,42 +3,54 @@
  */
 
 angular.module('mean.system').controller('MyCtrl', ['$scope', 'Global', 'mySocket', function ($scope, Global, mySocket) {
-    console.log();
+    console.log(Global.user);
     var SIGNALING_SERVER = '/',
-        defaultChannel = location.hash.substr(1) || 'video-conferencing-hangout';
-
-    window.username = Math.random() * 9999 << 9999;
+        defaultChannel = 'openhangouts-default';
 
     var connection = new RTCMultiConnection(defaultChannel);
 
     connection.session = {
         audio: true,
-        video: true,
-        screen: true
+        video: true
     };
 
     connection.openSignalingChannel = function(config) {
         var channel = config.channel || defaultChannel;
         var sender = Global.user._id; //Math.round(Math.random() * 60535) + 5000;
-
-        io.connect(SIGNALING_SERVER).emit('new-channel', {
+        // if no user id : redirect to login
+        mySocket.emit('new-channel', {
             channel: channel,
             sender: sender
         });
 
+        connection.extra = {
+            username: Global.user.username,
+            fullname: Global.user.name
+        };
         var socket = io.connect(SIGNALING_SERVER + channel);
         socket.channel = channel;
         socket.on('connect', function() {
             if (config.callback) config.callback(socket);
         });
 
+        socket.switchPresenter = function(id) {
+            if (connection.isInitiator())
+            {
+                socket.emit('setPresenter', {
+                    userid: id
+                });
+            }
+            else
+            {
+                alert("only the creator of the call can do that");
+            }
+        }
         socket.send = function(message) {
             socket.emit('message', {
                 sender: sender,
                 data: message
             });
         };
-
         socket.on('message', config.onmessage);
     };
 
@@ -50,7 +62,8 @@ angular.module('mean.system').controller('MyCtrl', ['$scope', 'Global', 'mySocke
 //                        });
 
             var video = getVideo(e, {
-                username: window.username
+                username:  Global.user.username,
+                fullname: Global.user.name
             });
 
             document.getElementById('local-video-container').appendChild(video);
@@ -94,8 +107,11 @@ angular.module('mean.system').controller('MyCtrl', ['$scope', 'Global', 'mySocke
 
         if (extra) {
             var h2 = document.createElement('h2');
+            var h22 = document.createElement('h2');
             h2.innerHTML = 'username: ' + extra.username;
+            h22.innerHTML = 'name: ' + extra.fullname;
             div.appendChild(h2);
+            div.appendChild(h22);
         }
         return div;
     }
