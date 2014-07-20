@@ -5,12 +5,12 @@
 
 // library to separate
 
-function room_exists(rooms, room)
-{
-    return rooms.some(function (obj) {
-        return obj.id === room.id;
-    });
-}
+//function room_exists(rooms, room)
+//{
+//    return rooms.some(function (obj) {
+//        return obj.id === room.id;
+//    });
+//}
 
 ////////////////////////////////////
 
@@ -66,7 +66,7 @@ module.exports = function(io) {
         }
 
         socket.on('new-channel', function (data) {
-            console.log("new channel");
+            console.log('new channel');
             if (!channels[data.channel]) {
                 initiatorChannel = data.channel;
             }
@@ -96,7 +96,7 @@ module.exports = function(io) {
             }
 
             socket.on('message', function (data) {
-                if (data.sender == sender) {
+                if (data.sender === sender) {
                     if(!username) username = data.data.sender;
 
                     socket.broadcast.emit('message', data.data);

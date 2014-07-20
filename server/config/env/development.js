@@ -8,7 +8,7 @@ try {
         fbsecret = process.env.OPENHANGOUTS_FACEBOOK_APP_SECRET;
 }
 catch (err){
-    console.log("Facebook app identifiers missing in env - please export the right parameters");
+    console.log('Facebook app identifiers missing in env - please export the right parameters');
     throw new Error();
 }
 
@@ -17,7 +17,7 @@ try {
         certificate = fs.readFileSync(process.env.NODE_CERTIFICATE_PATH);
 }
 catch (err){
-    console.log("HTTPS key and/or certificate path missing or not found - please export the right parameters");
+    console.log('HTTPS key and/or certificate path missing or not found - please export the right parameters');
     throw new Error();
 }
 
@@ -32,7 +32,7 @@ module.exports = {
     facebook: {
         clientID: fbid,
         clientSecret: fbsecret,
-        callbackURL: 'http://localhost:3000/auth/facebook/callback'
+        callbackURL: 'https://localhost:3000/auth/facebook/callback'
     },
     twitter: {
         clientID: 'CONSUMER_KEY',
