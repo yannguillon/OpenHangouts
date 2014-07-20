@@ -3,16 +3,35 @@
 var fs = require('fs'),
     dotenv = require('dotenv');
 dotenv.load();
+try {
+    var fbid = process.env.OPENHANGOUTS_FACEBOOK_APP_ID,
+        fbsecret = process.env.OPENHANGOUTS_FACEBOOK_APP_SECRET;
+}
+catch (err){
+    console.log("Facebook app identifiers missing in env - please export the right parameters");
+    throw new Error();
+}
+
+try {
+    var key = fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH),
+        certificate = fs.readFileSync(process.env.NODE_CERTIFICATE_PATH);
+}
+catch (err){
+    console.log("HTTPS key and/or certificate path missing or not found - please export the right parameters");
+    throw new Error();
+}
+
 module.exports = {
-    key: fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH),
-    cert: fs.readFileSync(process.env.NODE_CERTIFICATE_PATH),
+    key: key,
+    cert: certificate,
+
     db: 'mongodb://localhost/mean-dev',
     app: {
         name: 'MEAN - FullStack JS - Development'
     },
     facebook: {
-        clientID: 'APP_ID',
-        clientSecret: 'APP_SECRET',
+        clientID: fbid,
+        clientSecret: fbsecret,
         callbackURL: 'http://localhost:3000/auth/facebook/callback'
     },
     twitter: {
