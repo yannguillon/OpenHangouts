@@ -100,6 +100,9 @@ angular.module('mean.system').controller('MyCtrl', ['$scope', 'Global', 'mySocke
         return div;
     }
 
+
+    /// start the connection
+
     document.getElementById('init').onclick = function() {
         connection.interval = 1000;
         connection.open();
