@@ -1,6 +1,7 @@
 <section data-ng-controller="IndexController">
     <h1 mean-token="'home-default'">This is the home view</h1>
     <!--CRADO USE ANGLUAR YANN TOO LAZY TO LEARN FULL ANGULAR-->
+    {{global.user._id}}
     <input type="hidden" id="userId" value="{{global.user._id}}" />
     <!--v-->
 
@@ -128,9 +129,10 @@ var connection = new RTCMultiConnection(defaultChannel);
 
     connection.openSignalingChannel = function(config) {
     var channel = config.channel || defaultChannel;
-    var sender = Math.round(Math.random() * 60535) + 5000;
+    var sender = $('#userId').val();//Math.round(Math.random() * 60535) + 5000;
 
-    io.connect(SIGNALING_SERVER).emit('new-channel', {
+
+        io.connect(SIGNALING_SERVER).emit('new-channel', {
         channel: channel,
         sender: sender
     });
