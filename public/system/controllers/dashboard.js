@@ -10,5 +10,13 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
         document.getElementById('init').onclick = function() {
             WebRTC.connect()
         };
+//        $(function(){
+//            alert("jquery is loaded");
+//        });
+        $('.switch-presenter').on('click', function(){
+            alert("presentouse needs a switch");
+//            WebRTC.switchPresenter($(this.attr('id')));
+        });
+        // et quand je call switch-presenter on click rien ne se passe
     }
 ]);

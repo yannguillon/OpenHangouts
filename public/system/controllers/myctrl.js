@@ -117,12 +117,12 @@ angular.module('mean.system').controller('MyCtrl', ['$scope', 'Global', 'mySocke
     }
 
 
-    /// start the connection
-
-    document.getElementById('init').onclick = function() {
-        connection.interval = 1000;
-        connection.open();
-    };
+//    /// start the connection
+//
+//    document.getElementById('init').onclick = function() {
+//        connection.interval = 1000;
+//        connection.open();
+//    };
 
     connection.extra = {
         username: window.username

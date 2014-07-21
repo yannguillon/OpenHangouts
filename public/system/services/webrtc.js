@@ -5,25 +5,31 @@
 
 angular.module('mean.system').
     factory('WebRTC', ['Global', 'mySocket', function (Global, mySocket) {
-        var SIGNALING_SERVER    = '/';
-        var defaultChannel      = location.hash.substr(1) || 'video-conferencing-hangout';
-        var username            = Math.random() * 9999 << 9999;
-        var connection          = new RTCMultiConnection(defaultChannel);
+        var SIGNALING_SERVER = '/',
+            defaultChannel = 'openhangouts-default';
+
+        var connection = new RTCMultiConnection(defaultChannel);
 
         connection.session = {
             audio: true,
-            video: true,
-            screen: true
+            video: true
+        };
+
+        connection.extra = {
+            username: Global.user.username,
+            fullname: Global.user.name,
+            id: Global.user._id
         };
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
             var sender = Global.user._id; //Math.round(Math.random() * 60535) + 5000;
-
-            io.connect(SIGNALING_SERVER).emit('new-channel', {
+            // if no user id : redirect to login
+            mySocket.emit('new-channel', {
                 channel: channel,
                 sender: sender
             });
+
 
             var socket = io.connect(SIGNALING_SERVER + channel);
             socket.channel = channel;
@@ -31,25 +37,32 @@ angular.module('mean.system').
                 if (config.callback) config.callback(socket);
             });
 
+            socket.switchPresenter = function(id) {
+                if (connection.isInitiator())
+                {
+                    socket.emit('setPresenter', {
+                        userid: id
+                    });
+                }
+                else
+                {
+                    alert("only the creator of the call can do that");
+                }
+            }
             socket.send = function(message) {
                 socket.emit('message', {
                     sender: sender,
                     data: message
                 });
             };
-
             socket.on('message', config.onmessage);
         };
 
         connection.onstream = function(e) {
             if (e.type === 'local') {
-//            var video = getMediaElement(getVideo(e), {
-//                width: (videosContainer.clientWidth / 2) - 50,
-//                    buttons: ['mute-audio', 'mute-video', 'full-screen', 'volume-slider']
-//                        });
-
                 var video = getVideo(e, {
-                    username: username
+                    username:  Global.user.username,
+                    fullname: Global.user.name
                 });
 
                 document.getElementById('local-video-container').appendChild(video);
@@ -71,20 +84,19 @@ angular.module('mean.system').
             if (video) video.parentNode.removeChild(video);
         };
 
-        connection.extra = {
-            username: username
-        };
-
-        connection.connect();
-
         function getVideo(e, extra) {
             var div = document.createElement('div');
             div.className = 'video-container';
             div.id = e.userid || 'self';
-
             if (e.type === 'remote') {
                 if (connection.isInitiator) {
-                    var eject = document.createElement('button');
+                    alert("BOBOBOBOBO");
+                    var switchPresenter = document.createElement('button');
+                    switchPresenter.className = "switch-presenter";
+                    switchPresenter.setAttribute("id", extra.id);
+
+                    switchPresenter.innerHTML = "set as presenter";
+                    var eject = document.createElement('div');
                     eject.className = 'eject';
                     eject.title = 'Eject this User';
 
@@ -92,6 +104,7 @@ angular.module('mean.system').
                         connection.eject(this.parentNode.id);
                         this.parentNode.style.display = 'none';
                     };
+                    div.appendChild(switchPresenter);
                     div.appendChild(eject);
                 }
             }
@@ -99,16 +112,24 @@ angular.module('mean.system').
 
             if (extra) {
                 var h2 = document.createElement('h2');
+                var h22 = document.createElement('h2');
                 h2.innerHTML = 'username: ' + extra.username;
+                h22.innerHTML = 'name: ' + extra.fullname;
                 div.appendChild(h2);
+                div.appendChild(h22);
             }
             return div;
         }
+
+        connection.connect();
 
         return {
             connect: function() {
                 connection.interval = 1000;
                 connection.open();
+            },
+            switchPresenter: function(id){
+                socket.switchPresenter(id);
             }
         };
     }]);

@@ -76,6 +76,9 @@ module.exports = function(io) {
             onNewNamespace(data.channel, data.sender);
         });
 
+        socket.on('setPresenter', function(userid){
+            console.log("presentouse will be "+userid);
+        });
         socket.on('presence', function (channel) {
             var isChannelPresent = !! channels[channel];
             socket.emit('presence', isChannelPresent);
