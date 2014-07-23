@@ -7,7 +7,7 @@ angular.module('mean.system').
     factory('WebRTC', ['Global', 'mySocket', function (Global, mySocket) {
         var SIGNALING_SERVER = '/',
             defaultChannel = 'openhangouts-default';
-
+        var gsocket;
         var connection = new RTCMultiConnection(defaultChannel);
 
         connection.session = {
@@ -32,6 +32,7 @@ angular.module('mean.system').
 
 
             var socket = io.connect(SIGNALING_SERVER + channel);
+            gsocket = socket;
             socket.channel = channel;
             socket.on('connect', function() {
                 if (config.callback) config.callback(socket);
@@ -75,6 +76,7 @@ angular.module('mean.system').
                 remoteVideosContainer.appendChild(video, remoteVideosContainer.firstChild);
             }
             e.mediaElement.width = innerWidth / 3.4;
+            e.mediaElement.controls = false;
         };
 
         connection.onleave = function(userid, extra) {
@@ -90,11 +92,10 @@ angular.module('mean.system').
             div.id = e.userid || 'self';
             if (e.type === 'remote') {
                 if (connection.isInitiator) {
-                    alert("BOBOBOBOBO");
                     var switchPresenter = document.createElement('button');
                     switchPresenter.className = "switch-presenter";
                     switchPresenter.setAttribute("id", extra.id);
-
+                    switchPresenter.setAttribute("ng-click", "switchPresenter("+ extra.id +")");
                     switchPresenter.innerHTML = "set as presenter";
                     var eject = document.createElement('div');
                     eject.className = 'eject';
@@ -104,32 +105,42 @@ angular.module('mean.system').
                         connection.eject(this.parentNode.id);
                         this.parentNode.style.display = 'none';
                     };
-                    div.appendChild(switchPresenter);
-                    div.appendChild(eject);
-                }
-            }
-            div.appendChild(e.mediaElement);
+                    switchPresenter.onclick = function() {
+                        console.log(":(");
+                        gsocket.emit('setPresenter', {userid: extra.id});
+                };
 
-            if (extra) {
-                var h2 = document.createElement('h2');
-                var h22 = document.createElement('h2');
-                h2.innerHTML = 'username: ' + extra.username;
-                h22.innerHTML = 'name: ' + extra.fullname;
-                div.appendChild(h2);
-                div.appendChild(h22);
+                div.appendChild(switchPresenter);
+                div.appendChild(eject);
+
+//                    $('.glyphcon').on('click', function(){
+//                        alert("presentouse needs a switch");
+////            WebRTC.switchPresenter($(this.attr('id')));
+//                    });
             }
-            return div;
         }
+        div.appendChild(e.mediaElement);
+
+        if (extra) {
+            var h2 = document.createElement('h2');
+            var h22 = document.createElement('h2');
+            h2.innerHTML = 'username: ' + extra.username;
+            h22.innerHTML = 'name: ' + extra.fullname;
+            div.appendChild(h2);
+            div.appendChild(h22);
+        }
+        return div;
+    }
 
         connection.connect();
 
-        return {
-            connect: function() {
-                connection.interval = 1000;
-                connection.open();
-            },
-            switchPresenter: function(id){
-                socket.switchPresenter(id);
-            }
-        };
-    }]);
+return {
+    connect: function() {
+        connection.interval = 1000;
+        connection.open();
+    },
+    switchPresenter: function(id){
+        socket.switchPresenter(id);
+    }
+};
+}]);
