@@ -15,6 +15,7 @@ angular.module('mean.system').
             video: true
         };
 
+        //Clean : check if we need the id variable.
         connection.extra = {
             username: Global.user.username,
             fullname: Global.user.name,
