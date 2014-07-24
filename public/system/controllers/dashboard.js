@@ -16,12 +16,7 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
 //        document.getElementByClassName('switch-presenter').onclick = function() {
 //            alert("presentouse needs a switch");
 //        };
-        $scope.$watch(
-        $('.switch-presenter').on('click', function(){
-            alert("presentouse needs a switch");
-//            WebRTC.switchPresenter($(this.attr('id')));
-        })
-        );
+
         // et quand je call switch-presenter on click rien ne se passe
     }
 ]);

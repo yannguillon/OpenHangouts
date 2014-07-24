@@ -4,11 +4,11 @@
 'use strict';
 
 angular.module('mean.system').
-    factory('WebRTC', ['Global', 'mySocket', '$rootScope', '$window', '$sce', function (Global, mySocket, $rootScope, $window, $sce) {
+    factory('WebRTC', ['Global', 'mySocket', '$window', '$sce', function (Global, mySocket, $window, $sce) {
         var self = this;
         var SIGNALING_SERVER = '/',
             defaultChannel = 'openhangouts-default';
-//        var socket = null;
+        self.socket = null;
         var connection = new RTCMultiConnection(defaultChannel);
         var observerCallbacks = [];
         var notifyObservers = function(){
@@ -32,6 +32,12 @@ angular.module('mean.system').
             id: Global.user._id
         };
 
+        self.switchPresenter = function(id) {
+                connection.socket.emit('setPresenter', {
+                    id: id
+                });
+        }
+
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
             var sender = Global.user._id;
@@ -42,23 +48,13 @@ angular.module('mean.system').
             });
             // verif channel ok
             var socket = io.connect(SIGNALING_SERVER + channel);
-            console.log(socket);
 
             socket.channel = channel;
-            console.log(socket);
             socket.on('connect', function() {
-                console.log(socket);
                 if (config.callback) config.callback(socket);
             });
 
-            socket.switchPresenter = function(id) {
-                if (connection.isInitiator())
-                {
-                    socket.emit('setPresenter', {
-                        id: id
-                    });
-                }
-            }
+
             socket.send = function(message) {
                 socket.emit('message', {
                     sender: sender,
@@ -66,6 +62,8 @@ angular.module('mean.system').
                 });
             };
             socket.on('message', config.onmessage);
+            connection.socket = socket;
+            console.log(connection);
         };
 
         connection.onstream = function(e) {
@@ -96,7 +94,7 @@ angular.module('mean.system').
                 connection.open();
             },
             switchPresenter: function(id){
-            //    socketo.switchPresenter(id);
+            self.switchPresenter(id);
             },
             registerObserverCallback: function(callback){
                 observerCallbacks.push(callback);

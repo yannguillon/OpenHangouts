@@ -43,7 +43,7 @@
                         <div ng-repeat="user in users">
                             <div>ID : <span>{{user.id}}</span></div>
                             <div>Username : <span>{{user.username}}</span></div>
-                            <button class="switch-presenter" id="{{}}">set as presenter</button>
+                            <button class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
                             <video ng-src="{{user.stream}}" autoplay></video>
                         </div>
 

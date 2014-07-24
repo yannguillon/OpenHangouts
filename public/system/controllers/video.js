@@ -7,5 +7,16 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
             $scope.users = WebRTC.getUsers();
             $scope.$apply();
         });
+
+        this.switchPresenter = function(id){
+            WebRTC.switchPresenter(id);
+        };
+
+        $scope.$watch(
+            $('.switch-presenter').on('click', function(){
+                alert("presentouse needs a switch");
+//            WebRTC.switchPresenter($(this.attr('id')));
+            })
+        );
     }
 ]);
