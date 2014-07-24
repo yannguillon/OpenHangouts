@@ -29,6 +29,9 @@
     <div ng-controller="VideoController as video">
         <button id="init">Open NEW Session</button>
 
+        <input ng-model='channel' type='text'></input>
+        <button class="switch-presenter" ng-click="video.joinChannel()" >Join channel</button>
+
         <table  style="border-left: 1px solid black; width: 100%;">
             <tr>
                 <td id="local-video-container">

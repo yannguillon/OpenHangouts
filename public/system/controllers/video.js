@@ -9,14 +9,8 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
         });
 
         this.switchPresenter = function(id){
+            console.log('video.js : switchPresenter');
             WebRTC.switchPresenter(id);
         };
-
-        $scope.$watch(
-            $('.switch-presenter').on('click', function(){
-                alert("presentouse needs a switch");
-//            WebRTC.switchPresenter($(this.attr('id')));
-            })
-        );
     }
 ]);

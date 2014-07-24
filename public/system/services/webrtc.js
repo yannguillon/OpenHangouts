@@ -19,6 +19,8 @@ angular.module('mean.system').
 
         self.users = [];
         self.myuser = null;
+        self.sessions = {};
+
 
         connection.session = {
             audio: true,
@@ -33,10 +35,13 @@ angular.module('mean.system').
         };
 
         self.switchPresenter = function(id) {
+            console.log('id returned : ' + id);
+            if (connection.isInitiator){
                 connection.socket.emit('setPresenter', {
                     id: id
                 });
-        }
+            }
+        };
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
@@ -55,6 +60,10 @@ angular.module('mean.system').
             });
 
 
+            socket.on('myreturn', function(){
+                console.log('fuck off !!!');
+            });
+
             socket.send = function(message) {
                 socket.emit('message', {
                     sender: sender,
@@ -67,16 +76,31 @@ angular.module('mean.system').
         };
 
         connection.onstream = function(e) {
+            console.log('============ on stream called 8======================>' )
             if (e.type === 'local') {
                 var url = $window.URL.createObjectURL(e.stream);
                 self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)};
+                notifyObservers();
             }
 
             if (e.type === 'remote') {
                 var url = $window.URL.createObjectURL(e.stream);
                 self.users.push({'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)});
+                notifyObservers();
             }
-            notifyObservers();
+        };
+
+        connection.onopen = function(e){
+            console.log('Data conection is opened between you and : ' + e.extra.username);
+        };
+
+
+        connection.onNewSession = function(session){
+            if (self.sessions[session.sessionid])
+                return;
+            self.sessions[session.sessionid] = session;
+            session.join();
+            console.log('Making handshake withi room owner ....!!! ==> ' + session.extra.username);
         };
 
         connection.onleave = function(userid, extra) {
@@ -87,14 +111,14 @@ angular.module('mean.system').
 
         connection.connect();
         return {
-            getUsers: function(){return self.users},
-            getMyUser: function(){return self.myuser},
+            getUsers: function(){return self.users;},
+            getMyUser: function(){return self.myuser;},
             connect: function() {
                 connection.interval = 1000;
                 connection.open();
             },
             switchPresenter: function(id){
-            self.switchPresenter(id);
+                self.switchPresenter(id);
             },
             registerObserverCallback: function(callback){
                 observerCallbacks.push(callback);
