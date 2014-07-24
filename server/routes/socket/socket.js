@@ -77,7 +77,7 @@ module.exports = function(io) {
         });
 
         socket.on('setPresenter', function(userid){
-            console.log("presentouse will be "+userid);
+            console.log("presentouse will be "+userid.id);
         });
         socket.on('presence', function (channel) {
             var isChannelPresent = !! channels[channel];

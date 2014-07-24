@@ -1,4 +1,5 @@
-<div id="{{}}" class="video-container" ng-controller="VideoController">
-	<button ng-hide="{{user.isPresenter}}" class="switch-presenter" id="{{}}">set as presenter</button>
+<div id="{{}}" class="video-container" ng-controller="VideoController as video">
+	<button ng-hide="{{user.isPresenter}}" class="switch-presenter" id="">set as presenter</button>
+    <div ng-repeat="user in users">user found</div>
 	<video autoplay></video>
 </div>

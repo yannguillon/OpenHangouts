@@ -1,15 +1,11 @@
-**
- * Created by Quentin on 20/07/14.
- */
 'use strict';
 
-angular.module('mean.system').controller('VideoController', ['$scope', 'Global', 'WebRTC',
-    function ($scope, Global, WebRTC) {
-        $scope.global = Global;
-        this.user = [
-        
-        ];
-
-
+angular.module('mean.system').controller('VideoController', ['$rootScope', '$scope', 'Global', 'WebRTC',
+    function ($rootScope, $scope, Global, WebRTC) {
+        WebRTC.registerObserverCallback(function(){
+            $scope.myuser = WebRTC.getMyUser();
+            $scope.users = WebRTC.getUsers();
+            $scope.$apply();
+        });
     }
 ]);

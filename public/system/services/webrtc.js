@@ -4,11 +4,21 @@
 'use strict';
 
 angular.module('mean.system').
-    factory('WebRTC', ['Global', 'mySocket', function (Global, mySocket) {
+    factory('WebRTC', ['Global', 'mySocket', '$rootScope', '$window', '$sce', function (Global, mySocket, $rootScope, $window, $sce) {
+        var self = this;
         var SIGNALING_SERVER = '/',
             defaultChannel = 'openhangouts-default';
-        var gsocket;
+//        var socket = null;
         var connection = new RTCMultiConnection(defaultChannel);
+        var observerCallbacks = [];
+        var notifyObservers = function(){
+            angular.forEach(observerCallbacks, function(callback){
+                callback();
+            });
+        };
+
+        self.users = [];
+        self.myuser = null;
 
         connection.session = {
             audio: true,
@@ -24,18 +34,20 @@ angular.module('mean.system').
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
-            var sender = Global.user._id; //Math.round(Math.random() * 60535) + 5000;
+            var sender = Global.user._id;
             // if no user id : redirect to login
             mySocket.emit('new-channel', {
                 channel: channel,
                 sender: sender
             });
-
-
+            // verif channel ok
             var socket = io.connect(SIGNALING_SERVER + channel);
-            gsocket = socket;
+            console.log(socket);
+
             socket.channel = channel;
+            console.log(socket);
             socket.on('connect', function() {
+                console.log(socket);
                 if (config.callback) config.callback(socket);
             });
 
@@ -43,12 +55,8 @@ angular.module('mean.system').
                 if (connection.isInitiator())
                 {
                     socket.emit('setPresenter', {
-                        userid: id
+                        id: id
                     });
-                }
-                else
-                {
-                    alert("only the creator of the call can do that");
                 }
             }
             socket.send = function(message) {
@@ -62,86 +70,36 @@ angular.module('mean.system').
 
         connection.onstream = function(e) {
             if (e.type === 'local') {
-                var video = getVideo(e, {
-                    username:  Global.user.username,
-                    fullname: Global.user.name
-                });
-
-                document.getElementById('local-video-container').appendChild(video);
+                var url = $window.URL.createObjectURL(e.stream);
+                self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)};
             }
 
             if (e.type === 'remote') {
-                var video = getVideo(e, e.extra);
-
-                var remoteVideosContainer = document.getElementById('remote-videos-container');
-                remoteVideosContainer.appendChild(video, remoteVideosContainer.firstChild);
+                var url = $window.URL.createObjectURL(e.stream);
+                self.users.push({'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)});
             }
-            e.mediaElement.width = innerWidth / 3.4;
-            e.mediaElement.controls = false;
+            notifyObservers();
         };
 
         connection.onleave = function(userid, extra) {
             if (extra) console.log(extra.username + ' left you!');
-
             var video = document.getElementById(userid);
             if (video) video.parentNode.removeChild(video);
         };
 
-        function getVideo(e, extra) {
-            var div = document.createElement('div');
-            div.className = 'video-container';
-            div.id = e.userid || 'self';
-            if (e.type === 'remote') {
-                if (connection.isInitiator) {
-                    var switchPresenter = document.createElement('button');
-                    switchPresenter.className = "switch-presenter";
-                    switchPresenter.setAttribute("id", extra.id);
-                    switchPresenter.setAttribute("ng-click", "switchPresenter("+ extra.id +")");
-                    switchPresenter.innerHTML = "set as presenter";
-                    var eject = document.createElement('div');
-                    eject.className = 'eject';
-                    eject.title = 'Eject this User';
-
-                    eject.onclick = function() {
-                        connection.eject(this.parentNode.id);
-                        this.parentNode.style.display = 'none';
-                    };
-                    switchPresenter.onclick = function() {
-                        console.log(":(");
-                        gsocket.emit('setPresenter', {userid: extra.id});
-                };
-
-                div.appendChild(switchPresenter);
-                div.appendChild(eject);
-
-//                    $('.glyphcon').on('click', function(){
-//                        alert("presentouse needs a switch");
-////            WebRTC.switchPresenter($(this.attr('id')));
-//                    });
-            }
-        }
-        div.appendChild(e.mediaElement);
-
-        if (extra) {
-            var h2 = document.createElement('h2');
-            var h22 = document.createElement('h2');
-            h2.innerHTML = 'username: ' + extra.username;
-            h22.innerHTML = 'name: ' + extra.fullname;
-            div.appendChild(h2);
-            div.appendChild(h22);
-        }
-        return div;
-    }
-
         connection.connect();
-
-return {
-    connect: function() {
-        connection.interval = 1000;
-        connection.open();
-    },
-    switchPresenter: function(id){
-        socket.switchPresenter(id);
-    }
-};
-}]);
+        return {
+            getUsers: function(){return self.users},
+            getMyUser: function(){return self.myuser},
+            connect: function() {
+                connection.interval = 1000;
+                connection.open();
+            },
+            switchPresenter: function(id){
+            //    socketo.switchPresenter(id);
+            },
+            registerObserverCallback: function(callback){
+                observerCallbacks.push(callback);
+            }
+        };
+    }]);
