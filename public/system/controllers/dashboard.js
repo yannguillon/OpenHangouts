@@ -7,9 +7,20 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
     function ($scope, Global, WebRTC, $compile) {
         $scope.global = Global;
 
-        document.getElementById('init').onclick = function() {
-            WebRTC.connect();
-        };
+        var random = Math.floor(Math.random()*100000 + 50);
+        $scope.getRandom = function(){
+            return random;
+        }
+
+        $('.create-room').on('click', function() {
+            WebRTC.createRoom($(this).attr('id'));
+        });
+
+        $('.join-room').on('click', function() {
+            WebRTC.joinRoom($('#room-id').val());
+        });
+
+
 //        $(function(){
 //            alert("jquery is loaded");
 //        });

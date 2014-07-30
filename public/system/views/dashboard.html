@@ -24,10 +24,12 @@
     <!--</section>-->
 
 
-
+    <button class="create-room" id="{{getRandom()}}">Open NEW Room</button><div>Share this room :<span>{{getRandom()}}</span> </div>
+    <button class="join-room" >Join Room</button>
+    <input id="room-id" type="text" />
 
     <div ng-controller="VideoController as video">
-        <button id="init">Open NEW Session</button>
+
 
         <table  style="border-left: 1px solid black; width: 100%;">
             <tr>
@@ -51,6 +53,9 @@
                 </td>
             </tr>
         </table>
+        <div style="width:100%">
+            <video ng-src="{{screen.stream}}" autoplay></video>
+        </div>
     </div>
 
 
