@@ -77,6 +77,7 @@ module.exports = function(io) {
             onNewNamespace(data.channel, data.sender);
         });
 
+
 //        socket.on('new-channel', function (data) {
 //            console.log('rerouting to channel: ' + data.channel);
 //            onNewNamespace(data.channel, data.sender);
@@ -85,6 +86,7 @@ module.exports = function(io) {
         socket.on('message', function (data) {
                 socket.broadcast.emit('message', data.data);
         });
+
 
         socket.on('presence', function (channel) {
             var isChannelPresent = !! channels[channel];
@@ -98,6 +100,8 @@ module.exports = function(io) {
         });
     });
 
+
+
     function onNewNamespace(channel, sender) {
         io.of('/' + channel).on('connection', function (socket) {
             console.log(sender+" connected to room : "+ channel);
@@ -106,6 +110,13 @@ module.exports = function(io) {
                 io.isConnected = false;
                 socket.emit('connect', true);
             }
+            console.log('<====================8 ON New Channel 8=========================D');
+
+             socket.on('setPresenter', function(userid){
+                console.log('presentouse will be ' + userid.id);
+                                    socket.broadcast.emit('myreturn', userid.id);
+
+            });
 
             socket.on('setPresenter', function(userid){
                 console.log("presenter switch");

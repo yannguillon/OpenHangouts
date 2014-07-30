@@ -6,6 +6,12 @@
 angular.module('mean.system').controller('DashboardController', ['$scope', 'Global', 'WebRTC', '$compile',
     function ($scope, Global, WebRTC, $compile) {
         $scope.global = Global;
+        this.channel = "";
+ 
+        this.joinChannel = function(){
+            console.log(this.channel);
+        };
+
 
         var random = Math.floor(Math.random()*100000 + 50);
         $scope.getRandom = function(){
