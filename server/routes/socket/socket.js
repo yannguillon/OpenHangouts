@@ -147,16 +147,37 @@ module.exports = function(io) {
 //    }
 //};
 
-    var channels = {};
+    function inArray(value, array) {
+      for (var i = 0; i < array.length; i++) {
+        if (array[i] == value)
+            return true;
+      }
+      return false;
+    }
+
+
+    var usersRooms = {};
+
     io.on('connection', function (socket) {
         socket.on('message', function (data) {
+            if (!usersRooms[data.sender]){
+                usersRooms[data.sender] = new Array(data.channel);
+            }else if (!inArray(data.channel, usersRooms[data.sender])){
+                (usersRooms[data.sender]).push(data.channel);
+            }
+
+            console.log(usersRooms);
             console.log("TA MERE LE CHANNEL = " + data.channel + " called by " + data.username);
-            socket.join(data.channel);
+
+            for (var i = 0; i < usersRooms[data.sender].length; i++){
+                socket.join(usersRooms[data.sender][i]);
+                socket.broadcast.to(usersRooms[data.sender][i]).emit('message', data);
+            }
+
 //            if (channels[data.channel])
 //            {
 //
 //            }
-            socket.broadcast.to(data.channel).emit('message', data);
 //            socket.broadcast.emit('message', data);
 //            socket.leave(data.channel);
         });
