@@ -26,7 +26,6 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
             WebRTC.joinRoom($('#room-id').val());
         });
 
-
 //        $(function(){
 //            alert("jquery is loaded");
 //        });

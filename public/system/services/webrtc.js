@@ -20,8 +20,8 @@ angular.module('mean.system').
         self.users = [];
         self.myuser = null;
         self.screen = null;
+        self.mysock = null;
         self.fake_screen = false;
-
         connection.session = {
             audio: true,
             video: true
@@ -85,17 +85,7 @@ angular.module('mean.system').
                 if (config.callback) config.callback(socket);
             });
 
-            socket.on('presenterGiven', function(){
-                console.log("presenter given");
-                if (self.fake_screen === false)
-                {
-                    connection.addStream({    screen: true,
-                        oneway: true})
-                    self.fake_screen = true;
-                }
-                else
-                alert("BLOB - 2x screen");
-            });
+
 
 
             socket.send = function(message) {
@@ -105,27 +95,48 @@ angular.module('mean.system').
                 });
             };
             socket.on('message', config.onmessage);
-            connection.socket = socket;
-            socket.setPresenter = function(){alert("setPresenter");socket.emit('setPresenter', {
-                id: Global.user._id
-            })}
+
             connection.socket = socket;
         };
 
 
+        var openCustomActionsChannel = function(channel, connection)
+        {
+            io.connect(SIGNALING_SERVER).emit('new-custom-channel', {
+                channel: channel,
+                sender:  Global.user._id
+            });
+
+            self.mysock = io.connect(SIGNALING_SERVER + channel, {custom : true});
+            self.mysock.setPresenter = function(id){self.mysock.emit('setPresenter', {
+                id: id
+            })}
+
+            self.mysock.on('presenterGiven', function(id){
+                console.log(connection);
+                if (id === Global.user._id)
+                {
+                    connection.addStream({
+                        screen: true,
+                        oneway: true})
+                }
+            });
+        }
+
+
         var onOpen = function (roomId) {
-//            connection.connect(roomId);
             console.log("---> onOpen() triggered- Room created with id:" + roomId);
             connection.open(roomId);
+            openCustomActionsChannel(roomId, connection);
             console.log("current session :");
             console.log(connection.sessionid);
         };
 
         var onJoin = function(roomId)
         {
-//            connection.connect(roomId);
             console.log("---> join() called - joined room: "+ roomId);
             connection.join(roomId);
+            openCustomActionsChannel(roomId, connection);
             console.log("current session :");
             console.log(connection.sessionid);
         }
@@ -175,7 +186,7 @@ angular.module('mean.system').
                 onJoin(roomId);
             },
             switchPresenter: function(id){
-                connection.socket.setPresenter(id);
+                self.mysock.setPresenter(id);
             },
             registerObserverCallback: function(callback){
                 observerCallbacks.push(callback);

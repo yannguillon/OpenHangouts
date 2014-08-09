@@ -11,7 +11,6 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
         });
 
         this.switchPresenter = function(id){
-
             console.log("switch Presenter");
             WebRTC.switchPresenter(id);
         };
