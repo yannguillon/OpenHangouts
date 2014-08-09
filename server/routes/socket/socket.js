@@ -62,125 +62,127 @@ module.exports = function(io) {
 
 
 
-//    var channels = {};
-//    var self = this;
-//
-//    io.on('connection', function (socket) {
-//        var initiatorChannel = '';
-//        if (!io.isConnected) {
-//            io.isConnected = true;
-//            socket.emit('connect', true);
-//        }
-//
-//        socket.on('new-channel', function (data) {
-//            console.log(data.sender+' connected to channel : '+data.channel);
-//            if (!channels[data.channel]) {
-//                console.log('[ '+data.channel+' ] is set as the initiator(main) channel');
-//                initiatorChannel = data.channel;
-//            }
-//            channels[data.channel] = data.channel;
-//            onNewNamespace(data.channel, data.sender);
-//        });
-//
-//
-////        socket.on('new-channel', function (data) {
-////            console.log('rerouting to channel: ' + data.channel);
-////            onNewNamespace(data.channel, data.sender);
-////        });
-//
-//        socket.on('message', function (data) {
-//                socket.broadcast.emit('message', data.data);
-//        });
-//
-//
-//        socket.on('presence', function (channel) {
-//            var isChannelPresent = !! channels[channel];
-//            socket.emit('presence', isChannelPresent);
-//        });
-//
-//        socket.on('disconnect', function (channel) {
-//            if (initiatorChannel) {
-//                delete channels[initiatorChannel];
-//            }
-//        });
-//    });
-//
-//
-//
-//    function onNewNamespace(channel, sender) {
-//        io.of('/' + channel).on('connection', function (socket) {
-//            console.log(sender+" connected to room : "+ channel);
-//            var username;
-//            if (io.isConnected) {
-//                io.isConnected = false;
-//                socket.emit('connect', true);
-//            }
-//            console.log('<====================8 ON New Channel 8=========================D');
-//
-//             socket.on('setPresenter', function(userid){
-//                console.log('presentouse will be ' + userid.id);
-//                                    socket.broadcast.emit('myreturn', userid.id);
-//
-//            });
-//
-//            socket.on('setPresenter', function(userid){
-//                console.log("presenter switch");
-//                socket.emit('presenterGiven');
-//            });
-//
-//
-//            socket.on('message', function (data) {
-//                if (data.sender === sender) {
-//                    if(!username) username = data.data.sender;
-//
-//                    socket.broadcast.emit('message', data.data);
-//                }
-//            });
-//
-//            socket.on('disconnect', function() {
-//                if(username) {
-//                    socket.broadcast.emit('user-left', username);
-//                    username = null;
-//                }
-//            });
-//        });
-//    }
-//};
-
-    function inArray(value, array) {
-      for (var i = 0; i < array.length; i++) {
-        if (array[i] == value)
-            return true;
-      }
-      return false;
-    }
-
-
-    var usersRooms = {};
+    var channels = {};
+    var self = this;
 
     io.on('connection', function (socket) {
-        socket.on('message', function (data) {
-            if (!usersRooms[data.sender]){
-                usersRooms[data.sender] = new Array(data.channel);
-            }else if (!inArray(data.channel, usersRooms[data.sender])){
-                (usersRooms[data.sender]).push(data.channel);
+        var initiatorChannel = '';
+        if (!io.isConnected) {
+            io.isConnected = true;
+            socket.emit('connect', true);
+        }
+
+        socket.on('new-channel', function (data) {
+            if (!channels[data.channel]) {
+                console.log('[ '+data.channel+' ] is set as the initiator(main) channel');
+                initiatorChannel = data.channel;
             }
-
-            console.log(usersRooms);
-            console.log("TA MERE LE CHANNEL = " + data.channel + " called by " + data.username);
-
-            for (var i = 0; i < usersRooms[data.sender].length; i++){
-                socket.join(usersRooms[data.sender][i]);
-                socket.broadcast.to(usersRooms[data.sender][i]).emit('message', data);
-            }
-
-//            if (channels[data.channel])
-//            {
-//
-//            }
-//            socket.broadcast.emit('message', data);
-//            socket.leave(data.channel);
+            channels[data.channel] = data.channel;
+            onNewNamespace(data.channel, data.sender);
         });
+
+
+//        socket.on('new-channel', function (data) {
+//            console.log('rerouting to channel: ' + data.channel);
+//            onNewNamespace(data.channel, data.sender);
+//        });
+
+        socket.on('message', function (data) {
+                socket.broadcast.emit('message', data.data);
+        });
+
+
+        socket.on('presence', function (channel) {
+            var isChannelPresent = !! channels[channel];
+            socket.emit('presence', isChannelPresent);
+        });
+
+        socket.on('disconnect', function (channel) {
+            if (initiatorChannel) {
+                delete channels[initiatorChannel];
+            }
+        });
+
+//        socket.on('setPresenter', function(userid){
+//            console.log("presenter switch");
+//            socket.emit('presenterGiven');
+//        });
+
     });
+
+
+
+    function onNewNamespace(channel, sender) {
+        io.of('/' + channel).on('connection', function (socket) {
+            console.log(sender+" connected to room : "+ channel);
+            var username;
+            if (io.isConnected) {
+                io.isConnected = false;
+                socket.emit('connect', true);
+            }
+
+            socket.on('setPresenter', function(userid){
+                console.log('presentouse will be ' + userid.id);
+                      //              socket.broadcast.emit('myreturn', userid.id);
+
+            });
+
+
+
+
+            socket.on('message', function (data) {
+                if (data.sender === sender) {
+                    if(!username) username = data.data.sender;
+
+                    socket.broadcast.emit('message', data.data);
+                }
+            });
+
+            socket.on('disconnect', function() {
+                if(username) {
+                    socket.broadcast.emit('user-left', username);
+                    username = null;
+                }
+            });
+        });
+    }
+//};
+//
+//    function inArray(value, array) {
+//      for (var i = 0; i < array.length; i++) {
+//        if (array[i] == value)
+//            return true;
+//      }
+//      return false;
+//    }
+//
+//
+//    var usersRooms = {};
+//
+//    io.on('connection', function (socket) {
+//        socket.on('message', function (data) {
+//            if (!usersRooms[data.sender]){
+//                usersRooms[data.sender] = new Array(data.channel);
+//            }else if (!inArray(data.channel, usersRooms[data.sender])){
+//                (usersRooms[data.sender]).push(data.channel);
+//            }
+//
+//            console.log(usersRooms);
+//            console.log(data);
+//            console.log("TA MERE LE CHANNEL = " + data.channel + " called by " + data.username);
+//
+//            for (var i = 0; i < usersRooms[data.sender].length; i++){
+//                socket.join(usersRooms[data.sender][i]);
+//                socket.broadcast.to(usersRooms[data.sender][i]).emit('message', data);
+//            }
+//
+////            if (channels[data.channel])
+////            {
+////
+////            }
+////            socket.broadcast.emit('message', data);
+////            socket.leave(data.channel);
+//        });
+//    });
 
 }

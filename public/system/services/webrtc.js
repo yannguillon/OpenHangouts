@@ -39,80 +39,82 @@ angular.module('mean.system').
         }
 
 
-        var onMessageCallbacks = {};
-        var socketio = io.connect(SIGNALING_SERVER);
-
-        socketio.on('message', function(data) {
-            if(data.sender == connection.userid) return;
-
-            if (onMessageCallbacks[data.channel]) {
-                onMessageCallbacks[data.channel](data.message);
-            };
-        });
-
-        connection.openSignalingChannel = function (config) {
-            var channel = config.channel || this.channel;
-            onMessageCallbacks[channel] = config.onmessage;
-
-            if (config.onopen) setTimeout(config.onopen, 1000);
-            return {
-                send: function (message) {
-                    socketio.emit('message', {
-                        sender: connection.userid,
-                        username: connection.extra.fullname,
-                        channel: channel,
-                        message: message
-                    });
-                },
-                channel: channel
-            };
-        };
-
+//        var onMessageCallbacks = {};
+//        var socketio = io.connect(SIGNALING_SERVER);
 //
-//        connection.openSignalingChannel = function(config) {
-//            var channel = config.channel || defaultChannel;
-//            var sender = Global.user._id;
-//            io.connect(SIGNALING_SERVER).emit('new-channel', {
-//                channel: channel,
-//                sender: sender
-//            });
+//        socketio.on('message', function(data) {
+//            if(data.sender == connection.userid) return;
+//            onMessageCallbacks[data.channel](data.message);
+//            console.log(data.message);
+////            if (onMessageCallbacks[data.channel]) {
+////                onMessageCallbacks[data.channel](data.message);
+////            };
+//        });
+
+//        connection.openSignalingChannel = function (config) {
+//            var channel = config.channel || this.channel;
+//            onMessageCallbacks[channel] = config.onmessage;
 //
-//            var socket = io.connect(SIGNALING_SERVER + channel);
-//            socket.channel = channel;
-//            socket.on('connect', function() {
-//                if (config.callback) config.callback(socket);
-//            });
-//
-//            socket.on('presenterGiven', function(){
-//                console.log("presenter given");
-//                if (self.fake_screen === false)
-//                {
-//                    connection.addStream({    screen: true,
-//                        oneway: true})
-//                    self.fake_screen = true;
-//                }
-//                else
-//                alert("BLOB - 2x screen");
-//            });
-//
-//
-//            socket.send = function(message) {
-//                socket.emit('message', {
-//                    sender: sender,
-//                    data: message
-//                });
+//            if (config.onopen) setTimeout(config.onopen, 1000);
+//            return {
+//                send: function (message) {
+//                    socketio.emit('message', {
+//                        sender: connection.userid,
+//                        username: connection.extra.fullname,
+//                        channel: channel,
+//                        message: message
+//                    });
+//                },
+//                channel: channel
 //            };
-//            socket.on('message', config.onmessage);
-//            connection.socket = socket;
-//            socket.setPresenter = function(){socket.emit('setPresenter', {
-//                id: Global.user._id
-//            })}
-//            connection.socket = socket;
 //        };
 
 
+        connection.openSignalingChannel = function(config) {
+            var channel = config.channel || defaultChannel;
+            var sender = Global.user._id;
+            console.log("client wants channel : " + channel);
+            io.connect(SIGNALING_SERVER).emit('new-channel', {
+                channel: channel,
+                sender: sender
+            });
+
+            var socket = io.connect(SIGNALING_SERVER + channel);
+            socket.channel = channel;
+            socket.on('connect', function() {
+                if (config.callback) config.callback(socket);
+            });
+
+            socket.on('presenterGiven', function(){
+                console.log("presenter given");
+                if (self.fake_screen === false)
+                {
+                    connection.addStream({    screen: true,
+                        oneway: true})
+                    self.fake_screen = true;
+                }
+                else
+                alert("BLOB - 2x screen");
+            });
+
+
+            socket.send = function(message) {
+                socket.emit('message', {
+                    sender: sender,
+                    data: message
+                });
+            };
+            socket.on('message', config.onmessage);
+            connection.socket = socket;
+            socket.setPresenter = function(){alert("setPresenter");socket.emit('setPresenter', {
+                id: Global.user._id
+            })}
+            connection.socket = socket;
+        };
+
+
         var onOpen = function (roomId) {
-            connection.connect(roomId);
+//            connection.connect(roomId);
             console.log("---> onOpen() triggered- Room created with id:" + roomId);
             connection.open(roomId);
             console.log("current session :");
@@ -121,7 +123,7 @@ angular.module('mean.system').
 
         var onJoin = function(roomId)
         {
-            connection.connect(roomId);
+//            connection.connect(roomId);
             console.log("---> join() called - joined room: "+ roomId);
             connection.join(roomId);
             console.log("current session :");
