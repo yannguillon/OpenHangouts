@@ -17,6 +17,10 @@ angular.module('mean.system').
             });
         };
 
+        self.videoStream = null;
+        self.audioStream = null;
+        self.screenStream = null;
+
         self.users = [];
         self.myuser = null;
         self.screen = null;
@@ -143,6 +147,7 @@ angular.module('mean.system').
 
         connection.onstream = function(e) {
             console.log(e);
+
             if((e.type == 'local' || e.type == 'remote') && e.isScreen) {
                 var url = $window.URL.createObjectURL(e.stream);
                 console.log("!!!! SCREEN !!!!");
@@ -153,14 +158,34 @@ angular.module('mean.system').
                 var url = $window.URL.createObjectURL(e.stream);
                 self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)};
                 notifyObservers();
+                if (e.isAudio){
+                    self.audioStream = e.streamid;
+                }else if (e.isVideo){
+                    self.videoStream = e.streamid;
+                }else if (e.isScreen){
+                    self.screenStream = e.streamid;
+                }
+                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream)
+            
             }
             else if (e.type === 'remote') {
                 var url = $window.URL.createObjectURL(e.stream);
                 self.users.push({'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'video', 'stream': $sce.trustAsResourceUrl(url)});
                 notifyObservers();
-
             }
         };
+
+        connection.onstreamended = function(e) {
+            if (e.type == 'local'){
+                if (e.isAudio){
+                    self.audioStream = null;
+                }else if (e.isVideo){
+                    self.videoStream = null;
+                }else if (e.isScreen){
+                    self.screenStream = null;
+                }                    
+            }
+        }
 
         connection.onleave = function(userid, extra) {
             if (extra) console.log(extra.username + ' left you!');
