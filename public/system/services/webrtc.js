@@ -112,17 +112,23 @@ angular.module('mean.system').
             });
 
             self.mysock = io.connect(SIGNALING_SERVER + channel, {custom : true});
-            self.mysock.setPresenter = function(id){self.mysock.emit('setPresenter', {
-                id: id
-            })}
+            self.mysock.setPresenter = function(id){
+                if (self.screenStream !== null){
+                    connection.removeStream(self.screenStream);
+                }
+                self.mysock.emit('setPresenter', {
+                    id: id
+                })
+            }
 
             self.mysock.on('presenterGiven', function(id){
                 console.log(connection);
-                if (id === Global.user._id)
-                {
-                    connection.addStream({
-                        screen: true,
-                        oneway: true})
+                if (id === Global.user._id){
+                    if (self.screenStream == null){
+                        connection.addStream({
+                            screen: true,
+                            oneway: true});
+                    }
                 }
             });
         }
@@ -182,14 +188,18 @@ angular.module('mean.system').
         };
 
         connection.onstreamended = function(e) {
-            if (e.type == 'local'){
+            console.log("stream removed : type : " + e.type );
+            if (e.type === 'local'){
                 if (e.isAudio){
+                    console.log("audio");
                     self.audioStream = null;
                 }
                 if (e.isVideo){
+                    console.log("video");
                     self.videoStream = null;
                 }
                 if (e.isScreen){
+                    console.log("screen");
                     self.screenStream = null;
                 }                    
             }
