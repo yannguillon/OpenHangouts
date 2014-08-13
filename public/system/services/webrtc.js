@@ -85,9 +85,6 @@ angular.module('mean.system').
                 if (config.callback) config.callback(socket);
             });
 
-
-
-
             socket.send = function(message) {
                 socket.emit('message', {
                     sender: sender,
@@ -108,17 +105,41 @@ angular.module('mean.system').
             });
 
             self.mysock = io.connect(SIGNALING_SERVER + channel, {custom : true});
-            self.mysock.setPresenter = function(id){self.mysock.emit('setPresenter', {
-                id: id
-            })}
+            self.mysock.setPresenter = function(id){
+                for (var key in connection.streams) {
+                    var stream = connection.streams[key];
+                    console.log("REMOVING STREAM...");
+                    console.log(stream.streamid);
+                    if (stream.isScreen) {
+                        console.log("REMOVING STREAM...");
+                        console.log(stream);
+                        connection.removeStream(stream.streamid);
+                    }
+                }
+
+                self.mysock.emit('setPresenter', {
+                    id: id
+                })}
 
             self.mysock.on('presenterGiven', function(id){
-                console.log(connection);
                 if (id === Global.user._id)
                 {
+                    alert("ADD STREAM");
                     connection.addStream({
                         screen: true,
                         oneway: true})
+                }
+                else
+                {
+//                    alert("REMOVE STREAM");
+//                    for (var key in connection.streams) {
+//                        var stream = connection.streams[key];
+//                        console.log("STREAM IS");
+//                        console.log(stream);
+//                        if (stream.isScreen) {
+//                            connection.removeStream(stream.streamid);
+//                        }
+//                    }
                 }
             });
         }
@@ -142,10 +163,8 @@ angular.module('mean.system').
         }
 
         connection.onstream = function(e) {
-            console.log(e);
             if((e.type == 'local' || e.type == 'remote') && e.isScreen) {
                 var url = $window.URL.createObjectURL(e.stream);
-                console.log("!!!! SCREEN !!!!");
                 self.screen = {'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'screen', 'stream': $sce.trustAsResourceUrl(url)};
                 notifyObservers();
             }

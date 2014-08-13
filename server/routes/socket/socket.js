@@ -74,7 +74,6 @@ module.exports = function(io) {
 
         socket.on('new-channel', function (data) {
             if (!channels[data.channel]) {
-                console.log('[ '+data.channel+' ] is set as the initiator(main) channel');
                 initiatorChannel = data.channel;
             }
             channels[data.channel] = data.channel;
@@ -83,7 +82,6 @@ module.exports = function(io) {
 
         socket.on('new-custom-channel', function (data) {
             if (!channels[data.channel]) {
-                console.log('[ '+data.channel+' ] is set as the initiator(main) channel');
                 initiatorChannel = data.channel;
                 onNewNamespaceCustom(data.channel, data.sender);
             }
@@ -97,7 +95,7 @@ module.exports = function(io) {
 //        });
 
         socket.on('message', function (data) {
-                socket.broadcast.emit('message', data.data);
+            socket.broadcast.emit('message', data.data);
         });
 
 
@@ -123,7 +121,6 @@ module.exports = function(io) {
     function onNewNamespaceCustom(channel, sender) {
         io.of('/' + channel).on('connection', function (socket) {
             socket.on('setPresenter', function(userid){
-                console.log('presentouse will be ' + userid.id);
                 socket.broadcast.emit('presenterGiven', userid.id);
             });
         });
