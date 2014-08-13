@@ -153,20 +153,26 @@ angular.module('mean.system').
                 console.log("!!!! SCREEN !!!!");
                 self.screen = {'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'screen', 'stream': $sce.trustAsResourceUrl(url)};
                 notifyObservers();
+                if (e.type == 'local'){
+                    self.screenStream = e.streamid;
+                     console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
+               }
             }
             else if (e.type === 'local') {
+                if (e.isAudio){
+                    self.audioStream = e.streamid;
+                }
+                if (e.isVideo){
+                    self.videoStream = e.streamid;
+                }
+                if (e.isScreen){
+                    self.screenStream = e.streamid;
+                }
+                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
                 var url = $window.URL.createObjectURL(e.stream);
                 self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)};
                 notifyObservers();
-                if (e.isAudio){
-                    self.audioStream = e.streamid;
-                }else if (e.isVideo){
-                    self.videoStream = e.streamid;
-                }else if (e.isScreen){
-                    self.screenStream = e.streamid;
-                }
-                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream)
-            
+               
             }
             else if (e.type === 'remote') {
                 var url = $window.URL.createObjectURL(e.stream);
@@ -179,9 +185,11 @@ angular.module('mean.system').
             if (e.type == 'local'){
                 if (e.isAudio){
                     self.audioStream = null;
-                }else if (e.isVideo){
+                }
+                if (e.isVideo){
                     self.videoStream = null;
-                }else if (e.isScreen){
+                }
+                if (e.isScreen){
                     self.screenStream = null;
                 }                    
             }
