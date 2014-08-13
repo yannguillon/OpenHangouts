@@ -109,7 +109,7 @@ angular.module('mean.system').
                 for (var key in connection.streams) {
                     var stream = connection.streams[key];
                     console.log("REMOVING STREAM...");
-                    console.log(stream.streamid);
+                    console.log(stream);
                     if (stream.isScreen) {
                         console.log("REMOVING STREAM...");
                         console.log(stream);
