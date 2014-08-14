@@ -6,12 +6,10 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
             $scope.myuser = WebRTC.getMyUser();
             $scope.users = WebRTC.getUsers();
             $scope.screen = WebRTC.getScreen();
-            console.log("SCReeeeeeeeeeeeeeeeeeeeeeN:" + $scope.screen);
             $scope.$apply();
         });
 
         this.switchPresenter = function(id){
-            console.log("switch Presenter");
             WebRTC.switchPresenter(id);
         };
     }

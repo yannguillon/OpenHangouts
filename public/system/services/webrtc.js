@@ -17,6 +17,10 @@ angular.module('mean.system').
             });
         };
 
+        self.videoStream = null;
+        self.audioStream = null;
+        self.screenStream = null;
+
         self.users = [];
         self.myuser = null;
         self.screen = null;
@@ -85,6 +89,9 @@ angular.module('mean.system').
                 if (config.callback) config.callback(socket);
             });
 
+
+
+
             socket.send = function(message) {
                 socket.emit('message', {
                     sender: sender,
@@ -106,40 +113,22 @@ angular.module('mean.system').
 
             self.mysock = io.connect(SIGNALING_SERVER + channel, {custom : true});
             self.mysock.setPresenter = function(id){
-                for (var key in connection.streams) {
-                    var stream = connection.streams[key];
-                    console.log("REMOVING STREAM...");
-                    console.log(stream);
-                    if (stream.isScreen) {
-                        console.log("REMOVING STREAM...");
-                        console.log(stream);
-                        connection.removeStream(stream.streamid);
-                    }
-                }
+//                if (self.screenStream !== null){
 
+//                }
                 self.mysock.emit('setPresenter', {
                     id: id
-                })}
+                })
+            };
 
             self.mysock.on('presenterGiven', function(id){
-                if (id === Global.user._id)
-                {
-                    alert("ADD STREAM");
-                    connection.addStream({
-                        screen: true,
-                        oneway: true})
-                }
-                else
-                {
-//                    alert("REMOVE STREAM");
-//                    for (var key in connection.streams) {
-//                        var stream = connection.streams[key];
-//                        console.log("STREAM IS");
-//                        console.log(stream);
-//                        if (stream.isScreen) {
-//                            connection.removeStream(stream.streamid);
-//                        }
-//                    }
+                console.log(connection);
+                if (id === Global.user._id){
+                    if (self.screenStream == null){
+                        connection.addStream({
+                            screen: true,
+                            oneway: true});
+                    }
                 }
             });
         }
@@ -163,23 +152,86 @@ angular.module('mean.system').
         }
 
         connection.onstream = function(e) {
+            console.log(e);
+            if((e.type == 'remote') && e.isScreen && self.screenStream) {
+//                    console.log("ID OF THE STREAM " + e.streamid + "SCREEN ? " + e.isScreen);
+                connection.removeStream(self.screenStream);
+                self.screenStream = null;
+            }
             if((e.type == 'local' || e.type == 'remote') && e.isScreen) {
                 var url = $window.URL.createObjectURL(e.stream);
+                console.log("!!!! SCREEN !!!!");
                 self.screen = {'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'screen', 'stream': $sce.trustAsResourceUrl(url)};
                 notifyObservers();
+                if (e.type == 'local'){
+                    self.screenStream = e.streamid;
+                    console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
+                }
             }
             else if (e.type === 'local') {
+                if (e.isAudio){
+                    self.audioStream = e.streamid;
+                }
+                if (e.isVideo){
+                    self.videoStream = e.streamid;
+                }
+                if (e.isScreen){
+                    self.screenStream = e.streamid;
+                }
+                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
                 var url = $window.URL.createObjectURL(e.stream);
                 self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)};
                 notifyObservers();
+
             }
             else if (e.type === 'remote') {
                 var url = $window.URL.createObjectURL(e.stream);
                 self.users.push({'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'video', 'stream': $sce.trustAsResourceUrl(url)});
                 notifyObservers();
-
             }
         };
+
+//        connection.onleave = function(e) {
+//
+//        }
+
+
+        connection.onstreamended = function(e) {
+
+            if (e.type == 'remote') {
+                if (e.isScreen) {
+                    self.screen = null;
+                    notifyObservers();
+                }
+                else {
+                    console.log(self.users);
+                    for (var i = 0; i < self.users.length; i++) {
+                        console.log((self.users[i]).id + " == " + e.extra.id);
+                        if ((self.users[i]).id == e.extra.id) {
+                            self.users.splice(i, 1);
+                            console.log(self.users);
+                            notifyObservers();
+                            return;
+                        }
+                    }
+                }
+            }
+//            console.log("stream removed : type : " + e.type );
+//            if (e.type === 'local'){
+//                if (e.isAudio){
+//                    console.log("audio");
+//                    self.audioStream = null;
+//                }
+//                if (e.isVideo){
+//                    console.log("video");
+//                    self.videoStream = null;
+//                }
+//                if (e.isScreen){
+//                    console.log("screen");
+//                    self.screenStream = null;
+//                }
+//            }
+        }
 
         connection.onleave = function(userid, extra) {
             if (extra) console.log(extra.username + ' left you!');
