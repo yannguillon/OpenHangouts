@@ -35,7 +35,8 @@ angular.module('mean.system').
         connection.extra = {
             username: Global.user.username,
             fullname: Global.user.name,
-            id: Global.user._id
+            id: Global.user._id,
+            isPresenter: false
         };
 
         self.switchPresenter = function(id) {
@@ -178,15 +179,18 @@ angular.module('mean.system').
                 if (e.isScreen){
                     self.screenStream = e.streamid;
                 }
+
                 console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
                 var url = $window.URL.createObjectURL(e.stream);
-                self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url)};
+                if (connection.isInitiator)
+                    connection.extra.isPresenter = true;
+                self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url), 'isPresenter' : connection.extra.isPresenter};                    
                 notifyObservers();
 
             }
             else if (e.type === 'remote') {
                 var url = $window.URL.createObjectURL(e.stream);
-                self.users.push({'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'video', 'stream': $sce.trustAsResourceUrl(url)});
+                self.users.push({'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'video', 'stream': $sce.trustAsResourceUrl(url), 'isPresenter' : e.extra.isPresenter});
                 notifyObservers();
             }
         };
@@ -245,9 +249,9 @@ angular.module('mean.system').
 //        console.log("connect() called - Waiting for rooms to open");
 
         return {
-            getUsers: function(){return self.users},
-            getScreen: function(){console.log(self.screen); return self.screen},
-            getMyUser: function(){return self.myuser},
+            getUsers: function(){return self.users;},
+            getScreen: function(){console.log(self.screen); return self.screen;},
+            getMyUser: function(){return self.myuser;},
             createRoom: function (roomId) {
 //                connection.connect();
                 onOpen(roomId);
@@ -261,6 +265,18 @@ angular.module('mean.system').
             },
             registerObserverCallback: function(callback){
                 observerCallbacks.push(callback);
+            },
+            startSharingScreen: function(){
+                connection.addStream({
+                    screen: true,
+                    oneway: true
+                });
+            },
+            stopSharingScreen: function(){
+                console.log('screen ID to remove : ' + self.screenStream);
+                console.log(connection);
+                connection.removeStream(self.screenStream);
+                self.screenStream = null;
             }
         };
     }]);

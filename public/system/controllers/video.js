@@ -12,5 +12,12 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
         this.switchPresenter = function(id){
             WebRTC.switchPresenter(id);
         };
+
+        this.startSharingScreen = function(){
+            WebRTC.startSharingScreen();
+        };
+        this.stopSharingScreen = function(){
+            WebRTC.stopSharingScreen();
+        };
     }
 ]);

@@ -38,6 +38,11 @@
             <tr>
                 <td id="local-video-container">
                     <h2>Local video container</h2>
+
+                    <div ng-show='myuser.isPresenter'>
+                        <button ng-click="video.startSharingScreen()">Start</button>
+                        <button ng-click="video.stopSharingScreen()">Stop</button>
+                    </div>
                     <video ng-src="{{myuser.stream}}" autoplay></video>
                 </td>
                 <td id="remote-videos-container" style="background: white; border-left: 1px solid black;">
@@ -48,7 +53,8 @@
                         <div ng-repeat="user in users">
                             <div>ID : <span>{{user.id}}</span></div>
                             <div>Username : <span>{{user.username}}</span></div>
-                            <button class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
+                            <div>Am I presenter ? : {{user.isPresenter}}</div>
+                            <button ng-show="myuser.isPresenter" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
                             <video ng-src="{{user.stream}}" autoplay></video>
                         </div>
 
