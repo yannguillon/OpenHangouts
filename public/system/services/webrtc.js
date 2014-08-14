@@ -153,38 +153,35 @@ angular.module('mean.system').
         }
 
         connection.onstream = function(e) {
-            console.log(e);
-            if((e.type == 'remote') && e.isScreen && self.screenStream) {
-//                    console.log("ID OF THE STREAM " + e.streamid + "SCREEN ? " + e.isScreen);
-                connection.removeStream(self.screenStream);
-                self.screenStream = null;
-            }
+//            if((e.type == 'remote') && e.isScreen && self.screenStream) {
+//                connection.removeStream(self.screenStream);
+//                self.screenStream = null;
+//            }
             if((e.type == 'local' || e.type == 'remote') && e.isScreen) {
+                if (e.type == 'local') {
+                    self.screenStream = e.streamid;
+                }
                 var url = $window.URL.createObjectURL(e.stream);
-                console.log("!!!! SCREEN !!!!");
+                console.log("screen added");
                 self.screen = {'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'screen', 'stream': $sce.trustAsResourceUrl(url)};
                 notifyObservers();
-                if (e.type == 'local'){
-                    self.screenStream = e.streamid;
-                    console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
-                }
             }
             else if (e.type === 'local') {
-                if (e.isAudio){
-                    self.audioStream = e.streamid;
-                }
-                if (e.isVideo){
-                    self.videoStream = e.streamid;
-                }
-                if (e.isScreen){
-                    self.screenStream = e.streamid;
-                }
+//                if (e.isAudio){
+//                    self.audioStream = e.streamid;
+//                }
+//                if (e.isVideo){
+//                    self.videoStream = e.streamid;
+//                }
+//                if (e.isScreen){
+//                    self.screenStream = e.streamid;
+//                }
 
-                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
+//                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
                 var url = $window.URL.createObjectURL(e.stream);
                 if (connection.isInitiator)
                     connection.extra.isPresenter = true;
-                self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url), 'isPresenter' : connection.extra.isPresenter};                    
+                self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url), 'isPresenter' : connection.extra.isPresenter};
                 notifyObservers();
 
             }
@@ -201,22 +198,26 @@ angular.module('mean.system').
 
 
         connection.onstreamended = function(e) {
-
-            if (e.type == 'remote') {
-                if (e.isScreen) {
-                    self.screen = null;
-                    notifyObservers();
+            if (e.isScreen) {
+                if (e.type === 'local') {
+                    connection.removeStream(e.streamid);
+                    (connection.streams[e.streamid]).stop();
+                    self.screenStream = null;
+                    console.log("streams");
+                    console.log(connection.streams);
                 }
-                else {
-                    console.log(self.users);
-                    for (var i = 0; i < self.users.length; i++) {
-                        console.log((self.users[i]).id + " == " + e.extra.id);
-                        if ((self.users[i]).id == e.extra.id) {
-                            self.users.splice(i, 1);
-                            console.log(self.users);
-                            notifyObservers();
-                            return;
-                        }
+                self.screen = null;
+                notifyObservers();
+            }
+            else {
+                console.log(self.users);
+                for (var i = 0; i < self.users.length; i++) {
+                    console.log((self.users[i]).id + " == " + e.extra.id);
+                    if ((self.users[i]).id == e.extra.id) {
+                        self.users.splice(i, 1);
+                        console.log(self.users);
+                        notifyObservers();
+                        return;
                     }
                 }
             }
@@ -271,12 +272,6 @@ angular.module('mean.system').
                     screen: true,
                     oneway: true
                 });
-            },
-            stopSharingScreen: function(){
-                console.log('screen ID to remove : ' + self.screenStream);
-                console.log(connection);
-                connection.removeStream(self.screenStream);
-                self.screenStream = null;
             }
         };
     }]);

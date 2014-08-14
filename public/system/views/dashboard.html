@@ -1,29 +1,6 @@
 <section data-ng-controller="DashboardController">
     <h1 mean-token="'home-default'">This is my dashboard</h1>
 
-    <!--CRADO USE ANGLUAR YANN TOO LAZY TO LEARN FULL ANGULAR-->
-    <input type="hidden" id="userId" value="{{global.user._id}}" />
-    <!--v-->
-
-    <!--<h2 id="number-of-participants" style="display: block;text-align: center;border:0;margin-bottom:0;">Its a full-HD (1080p) screen sharing application using <a href="https://www.webrtc-experiment.com/">WebRTC</a>!</h2>-->
-
-    <!--<section class="experiment">-->
-
-    <!--<input type="text" id="roomName" />-->
-
-
-    <!--<button id="createRoom">create the room</button>-->
-    <!--<button id="joinRoom">join the room</button>-->
-
-
-    <!--<input type="text" id="room" value="roomOne" />-->
-    <!--<button id="send">Send</button>-->
-
-    <!--<div id="message" style="background-color: red;height:50px;width:100%"></div>-->
-
-    <!--</section>-->
-
-
     <button class="create-room" id="{{getRandom()}}">Open NEW Room</button><div>Share this room :<span>{{getRandom()}}</span> </div>
     <button class="join-room" >Join Room</button>
     <input id="room-id" type="text" />
@@ -41,15 +18,13 @@
 
                     <div ng-show='myuser.isPresenter'>
                         <button ng-click="video.startSharingScreen()">Start</button>
-                        <button ng-click="video.stopSharingScreen()">Stop</button>
+                        <p>Use your the button of your browser to stop sharing screen</p>
                     </div>
                     <video ng-src="{{myuser.stream}}" autoplay></video>
                 </td>
                 <td id="remote-videos-container" style="background: white; border-left: 1px solid black;">
                     <h2>Remote videos container</h2>
                     <div >
-                        <!-- ng-hide="{{user.isPresenter}}" -->
-                        <!--class="video-container"-->
                         <div ng-repeat="user in users">
                             <div>ID : <span>{{user.id}}</span></div>
                             <div>Username : <span>{{user.username}}</span></div>
@@ -69,109 +44,3 @@
 
 
 </section>
-
-<script>
-    //    var SIGNALING_SERVER = '/',
-    //            defaultChannel = location.hash.substr(1) || 'video-conferencing-hangout';
-    //
-    //    window.username = Math.random() * 9999 << 9999;
-    //
-    //    var connection = new RTCMultiConnection(defaultChannel);
-    //
-    //    connection.session = {
-    //        audio: true,
-    //        video: true,
-    //        screen: true
-    //    };
-    //
-    //
-    //
-    //    connection.openSignalingChannel = function(config) {
-    //        var channel = config.channel || defaultChannel;
-    //        var sender = Math.round(Math.random() * 60535) + 5000;
-    //
-    //        io.connect(SIGNALING_SERVER).emit('new-channel', {
-    //            channel: channel,
-    //            sender: sender
-    //        });
-    //
-    //        var socket = io.connect(SIGNALING_SERVER + channel);
-    //        socket.channel = channel;
-    //        socket.on('connect', function() {
-    //            if (config.callback) config.callback(socket);
-    //        });
-    //
-    //        socket.send = function(message) {
-    //            socket.emit('message', {
-    //                sender: sender,
-    //                data: message
-    //            });
-    //        };
-    //
-    //        socket.on('message', config.onmessage);
-    //    };
-    //
-    //    connection.onstream = function(e) {
-    //        if (e.type === 'local') {
-    //            var video = getVideo(e, {
-    //                username: window.username
-    //            });
-    //
-    //            document.getElementById('local-video-container').appendChild(video);
-    //        }
-    //
-    //        if (e.type === 'remote') {
-    //            var video = getVideo(e, e.extra);
-    //
-    //            var remoteVideosContainer = document.getElementById('remote-videos-container');
-    //            remoteVideosContainer.appendChild(video, remoteVideosContainer.firstChild);
-    //        }
-    //        e.mediaElement.width = innerWidth / 3.4;
-    //    };
-    //
-    //    connection.onleave = function(userid, extra) {
-    //        if (extra) console.log(extra.username + ' left you!');
-    //
-    //        var video = document.getElementById(userid);
-    //        if (video) video.parentNode.removeChild(video);
-    //    };
-    //
-    //    function getVideo(e, extra) {
-    //        var div = document.createElement('div');
-    //        div.className = 'video-container';
-    //        div.id = e.userid || 'self';
-    //
-    //        if (e.type === 'remote') {
-    //            if (connection.isInitiator) {
-    //                var eject = document.createElement('button');
-    //                eject.className = 'eject';
-    //                eject.title = 'Eject this User';
-    //
-    //                eject.onclick = function() {
-    //                    connection.eject(this.parentNode.id);
-    //                    this.parentNode.style.display = 'none';
-    //                };
-    //                div.appendChild(eject);
-    //            }
-    //        }
-    //        div.appendChild(e.mediaElement);
-    //
-    //        if (extra) {
-    //            var h2 = document.createElement('h2');
-    //            h2.innerHTML = 'username: ' + extra.username;
-    //            div.appendChild(h2);
-    //        }
-    //        return div;
-    //    }
-    //
-    //    document.getElementById('init').onclick = function() {
-    //        connection.interval = 1000;
-    //        connection.open();
-    //    };
-    //
-    //    connection.extra = {
-    //        username: window.username
-    //    };
-    //
-    //    connection.connect();
-</script>
