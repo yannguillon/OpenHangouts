@@ -1,46 +1,57 @@
 <section data-ng-controller="DashboardController">
-    <h1 mean-token="'home-default'">This is my dashboard</h1>
-
-    <button class="create-room" id="{{getRandom()}}">Open NEW Room</button><div>Share this room :<span>{{getRandom()}}</span> </div>
-    <button class="join-room" >Join Room</button>
-    <input id="room-id" type="text" />
-
     <div ng-controller="VideoController as video">
 
-
-        <input ng-model='channel' type='text'></input>
-        <button class="switch-presenter" ng-click="video.joinChannel()" >Join channel</button>
-
-        <table  style="border-left: 1px solid black; width: 100%;">
-            <tr>
-                <td id="local-video-container">
-                    <h2>Local video container</h2>
-
-                    <div ng-show='myuser.isPresenter'>
-                        <button ng-click="video.startSharingScreen()">Start</button>
-                        <p>Use your the button of your browser to stop sharing screen</p>
-                    </div>
-                    <video ng-src="{{myuser.stream}}" autoplay></video>
-                </td>
-                <td id="remote-videos-container" style="background: white; border-left: 1px solid black;">
-                    <h2>Remote videos container</h2>
-                    <div >
-                        <div ng-repeat="user in users">
-                            <div>ID : <span>{{user.id}}</span></div>
-                            <div>Username : <span>{{user.username}}</span></div>
-                            <div>Am I presenter ? : {{user.isPresenter}}</div>
-                            <button ng-show="myuser.isPresenter" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
-                            <video ng-src="{{user.stream}}" autoplay></video>
-                        </div>
-
-                    </div>
-                </td>
-            </tr>
-        </table>
-        <div style="width:100%">
-            <video ng-show="screen" ng-src="{{screen.stream}}" autoplay></video>
+        <div style="top:99px; width:80%;padding:5px;margin-top:15px;background-color:#686868;border-radius:10px" class="room-controls">
+            <button class="create-room btn btn-default btn-sm" id="{{getRandom()}}">Open NEW Room</button>
+            <input  style="height:33px;"  type="text" name="country" value="{{getRandom()}}" readonly>
+            <button class="join-room btn btn-default btn-sm" >Join Room</button>
+            <input  style="height:33px;" id="room-id" type="text" />
+            <button ng-show='myuser.isPresenter' ng-click="video.startSharingScreen()" class="start-screensharing btn btn-default btn-sm">Start</button>
         </div>
-    </div>
+
+        <div class="local-video-container" style="position:fixed;bottom: 20px;left:130px;z-index: 999;">
+            <video ng-class="{ 'active' : myuser.stream }" style="width:300px" ng-src="{{myuser.stream}}" autoplay></video>
+
+        </div>
+
+        <div style="width:80%;float:left;min-height:1px;padding:10px" class="screen-container container">
+            <video style="width:100%;border-width:3px;border-style:solid;border-color:#2d2d2d;" ng-show="screen" ng-src="{{screen.stream}}" autoplay></video>
+        </div>
+
+        <div style="width:20%;height:100%;position:absolute;float:left;top:140px;right:0;overflow-y:scroll;" class="videos-container container">
+
+            <div style="vertical-align:bottom;margin:15px 0 15px 0" ng-repeat="user in users">
+                <!--<div>ID : <span>{{user.id}}</span></div>-->
+                <!--<div>Username : <span>{{user.username}}</span></div>-->
+                <!--<div>Am I presenter ? : {{user.isPresenter}}</div>-->
+                <!--<button ng-show="myuser.isPresenter" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>-->
+
+
+                <!--<div id="video_box">-->
+                <!--<div id="video_overlays"></div>-->
+                <!--</div>-->
+
+                <video ng-class="{ 'active' : user.stream }" style="width:90%" ng-src="{{user.stream}}" autoplay></video>
+            </div>
+        </div>
+
+        <!--<table  style="border-left: 1px solid black; width: 100%;">-->
+        <!--<tr>-->
+        <!--<td id="local-video-container">-->
+        <!--<h2>Local video container</h2>-->
+
+        <!--</td>-->
+        <!--<td id="remote-videos-container" style="background: white; border-left: 1px solid black;">-->
+        <!--<h2>Remote videos container</h2>-->
+        <!--<div >-->
+
+        <!--</div>-->
+        <!--</td>-->
+        <!--</tr>-->
+        <!--</table>-->
+        <!--<div style="width:100%">-->
+        <!--</div>-->
+        <!--</div>-->
 
 
 </section>

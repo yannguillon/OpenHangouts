@@ -2,11 +2,14 @@
     Common Properties
 **/
 
-body
-{
-    background-color: #ffffff;
+body {
+    background-image: url("background.png");
 }
 
+video.active
+{
+box-shadow: 1px 1px 12px #555;
+}
 .page-header {
     padding-bottom: 0 !important;
     margin: 0 !important;
