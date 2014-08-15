@@ -61,6 +61,14 @@ footer p {
 }
 
 
+
+
+
+.video-container:first-child{
+    margin-top: 140px;
+}
+
+
 /**
     Navbar Properties
 **/

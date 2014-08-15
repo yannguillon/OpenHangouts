@@ -16,5 +16,9 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
         this.startSharingScreen = function(){
             WebRTC.startSharingScreen();
         };
+
+        this.getUserStatus = function(user){
+            return user.isPresenter ? 'Presenter' : '';
+        };
     }
 ]);
