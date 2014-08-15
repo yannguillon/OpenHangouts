@@ -123,14 +123,27 @@ angular.module('mean.system').
             };
 
             self.mysock.on('presenterGiven', function(id){
-                console.log(connection);
+                console.log("Presenter Given called");
                 if (id === Global.user._id){
-                    if (self.screenStream == null){
-                        connection.addStream({
-                            screen: true,
-                            oneway: true});
-                    }
+                    connection.extra.isPresenter = true;
+                    self.myuser.isPresenter = true;
+                    self.mysock.emit('notifyNewPresenter', id);
                 }
+                for (var i = 0; self.users && i < self.users.length; i++){
+                    self.users[i].isPresenter = ((self.users[i]).id === id);
+                }
+                notifyObservers();
+            });
+
+            self.mysock.on('newPresenterSet', function(id){
+                if (connection.extra.isPresenter === true){
+                    connection.extra.isPresenter = false;
+                    self.myuser.isPresenter = false;
+                }
+                for (var i = 0; self.users && i < self.users.length; i++){
+                    self.users[i].isPresenter = ((self.users[i]).id === id);
+                }
+                notifyObservers();
             });
         }
 

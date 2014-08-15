@@ -123,6 +123,9 @@ module.exports = function(io) {
             socket.on('setPresenter', function(userid){
                 socket.broadcast.emit('presenterGiven', userid.id);
             });
+            socket.on('notifyNewPresenter', function(id){
+                socket.broadcast.emit('newPresenterSet', id);
+            });
         });
     }
 
