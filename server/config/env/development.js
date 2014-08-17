@@ -1,7 +1,7 @@
 'use strict';
 
-var fs = require('fs'),
-    dotenv = require('dotenv');
+
+var dotenv = require('dotenv');
 dotenv.load();
 try {
     var fbid = process.env.OPENHANGOUTS_FACEBOOK_APP_ID,
@@ -12,19 +12,7 @@ catch (err){
     throw new Error();
 }
 
-try {
-    var key = fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH),
-        certificate = fs.readFileSync(process.env.NODE_CERTIFICATE_PATH);
-}
-catch (err){
-    console.log('HTTPS key and/or certificate path missing or not found - please export the right parameters');
-    throw new Error();
-}
-
 module.exports = {
-    key: key,
-    cert: certificate,
-
     db: 'mongodb://localhost/mean-dev',
     app: {
         name: 'MEAN - FullStack JS - Development'

@@ -3,7 +3,30 @@
 var path = require('path');
 var rootPath = path.normalize(__dirname + '/../../..');
 
+
+var fs = require('fs'),
+    dotenv = require('dotenv');
+dotenv.load();
+    
+try {
+    var key = fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH),
+        certificate = fs.readFileSync(process.env.NODE_CERTIFICATE_PATH);
+}
+catch (err){
+    try {
+        var key = process.env.NODE_PRIVATEKEY,
+            certificate = process.env.NODE_CERTIFICATE;
+    }
+    catch (err){
+        console.log('HTTPS key and/or certificate path missing or not found - please export the right parameters');
+        throw new Error();
+    }
+}
+
 module.exports = {
+    key: key,
+    cert: certificate,
+
 	root: rootPath,
 	port: process.env.PORT || 3000,
 	hostname: process.env.HOST || process.env.HOSTNAME,
