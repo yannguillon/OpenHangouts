@@ -32,7 +32,7 @@ conn.once('open', function() {
     if (config.key){
 	    var s = https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
     }else{
-    	var s = http.createServer().listen(config.port, config.hostname);
+    	var s = app.listen(config.port, config.hostname);
     }
     socket.listen(s);
     console.log('MEAN app started on port ' + config.port + ' (' + process.env.NODE_ENV + ')');
