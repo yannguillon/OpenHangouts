@@ -252,36 +252,11 @@ angular.module('mean.system').
         };
 
 
-
-
-
-
         connection.onleave = function(userid, extra) {
             if (extra) console.log(extra.username + ' left you!');
             var video = document.getElementById(userid);
             if (video) video.parentNode.removeChild(video);
         };
-
-
-
-        var iceServers = [];
-
-        // STUN server
-        iceServers.push({
-            url: 'stun.l.google.com:19302'
-        });
-
-        // TURN server
-        iceServers.push({
-            url: 'turn:numb.viagenie.ca',
-            credential: 'muazkh',
-            username: 'webrtc@live.com'
-        });
-
-        connection.iceServers = iceServers;
-
-        // if you want to enjoy XirSys' STUN/TURN servers
-        connection.getExternalIceServers = true;
 
 
 
