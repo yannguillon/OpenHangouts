@@ -113,9 +113,11 @@ footer p {
 /**
     logged_container Properties
 **/
+/**
 .logged_container{
     padding-left: 100px;
 }
+**/
 
 
 /**
@@ -125,6 +127,8 @@ footer p {
 .navbar-default {
     background-color: #f5f5f5;
     border-color: #e0e0e0;
+    border-top: 3px solid #4a678d;
+    opacity: 0.85;
 }
 .navbar-default .navbar-brand {
     color: #5f5f5f;
