@@ -165,11 +165,12 @@ angular.module('mean.system').
             console.log(connection.sessionid);
         }
 
+        connection.streams.mute({
+            audio: true,
+            type: 'local'
+        });
+
         connection.onstream = function(e) {
-//            if((e.type == 'remote') && e.isScreen && self.screenStream) {
-//                connection.removeStream(self.screenStream);
-//                self.screenStream = null;
-//            }
             if((e.type == 'local' || e.type == 'remote') && e.isScreen) {
                 if (e.type == 'local') {
                     self.screenStream = e.streamid;
@@ -179,18 +180,16 @@ angular.module('mean.system').
                 self.screen = {'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'screen', 'stream': $sce.trustAsResourceUrl(url)};
                 notifyObservers();
             }
-            else if (e.type === 'local') {
-//                if (e.isAudio){
-//                    self.audioStream = e.streamid;
-//                }
-//                if (e.isVideo){
-//                    self.videoStream = e.streamid;
-//                }
-//                if (e.isScreen){
-//                    self.screenStream = e.streamid;
-//                }
+//            else if (e.type == 'local' && e.isVideo)
+//            {
+//                console.log("needs mute");
+//                connection.streams[e.streamid].mute({
+//                    audio: true,
+//                    video: true
+//                });
+//            }
 
-//                console.log("video stream : " + self.videoStream + " / audio stream : " + self.audioStream + " / srean stream : " + self.screenStream);
+            else if (e.type === 'local') {
                 var url = $window.URL.createObjectURL(e.stream);
                 if (connection.isInitiator)
                     connection.extra.isPresenter = true;
