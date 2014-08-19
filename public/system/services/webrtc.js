@@ -41,7 +41,7 @@ angular.module('mean.system').
 
         self.switchPresenter = function(id) {
 
-        }
+        };
 
 
 //        var onMessageCallbacks = {};
@@ -167,6 +167,7 @@ angular.module('mean.system').
 
         connection.streams.mute({
             audio: true,
+            video: true,
             type: 'local'
         });
 
