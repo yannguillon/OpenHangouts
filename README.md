@@ -1,11 +1,13 @@
-[![MEAN Logo](http://www.mean.io/img/logos/meanlogo.png)](http://mean.io/)
-[![WebRTC Logo](http://www.webrtc.org/_/rsrc/1318870658554/config/customLogo.gif?revision=8)](http://www.webrtc.org/)
-[![RTCMultiConnection Logo](http://www.rtcmulticonnection.org/images/logo.png)](http://www.rtcmulticonnection.org/)
+[![OpenHangouts Logo](https://openhangouts.uni.me/system/assets/img/logo.png)](http://openhangouts.uni.me/)
 
 # OpenHangouts
 
-Complete Installation
-==============
+OpenHangouts is a Mean Stack (+socket.io) implementation of the RTCMultiConnection library.
+It handles room conferencing for Google Chrome, with screen-sharing, audio and video.
+A working demonstration can be found at :
+    https://openhangouts.uni.me
+
+### Installation
 
 Environment variables
 -------------
@@ -25,6 +27,14 @@ In example, for Facebook :
 export OPENHANGOUTS_FACEBOOK_APP_ID='xxxxxxxxxxxx'
 export OPENHANGOUTS_FACEBOOK_APP_SECRET='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 ```
+
+In general :
+
+```sh
+export OPENHANGOUTS_SERVICE_NAME_UNDERSCORED_APP_ID='xx'
+export OPENHANGOUTS_SERVICE_NAME_UNDERSCORED_APP_SECRET='xx'
+```
+
 
 Installation
 -------------
