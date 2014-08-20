@@ -10,7 +10,7 @@
         </div>
 
         <div class="local-video-container" style="position:fixed;bottom: 20px;left:130px;z-index: 999;">
-            <video ng-class="{ 'active' : myuser.stream }" style="width:300px" ng-src="{{myuser.stream}}" autoplay></video>
+            <video ng-class="{ 'active' : myuser.stream }" style="width:300px" ng-src="{{myuser.stream}}" autoplay muted=true volume=0></video>
 
         </div>
 
