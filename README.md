@@ -77,21 +77,23 @@ Running the project
 grunt
 ```
 
-Browser configuration
--------------
-
 Your application is now running at the following URL :
     https://localhost:3000
 
-Either install the RTCMulticonnection extension for chrome
+
+
+Browser configuration
+-------------
+
+Either install the screen capturing extension for chrome
 
     https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk
 
-Or start Chrome with the following flag (or run ./chrome.sh at the root directory of the project):
+Or start Chrome with the following flag (or run ./chrome.sh at the root directory of the project)
 
     google-chrome --enable-usermedia-screen-capturing
 
-More information about flags at:
+More information about flags at
 
     http://www.chromium.org/developers/how-tos/run-chromium-with-flags
 
