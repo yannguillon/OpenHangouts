@@ -1,4 +1,4 @@
-[![OpenHangouts Logo](https://openhangouts.uni.me/system/assets/img/logo.png)](http://openhangouts.uni.me/)
+[![OpenHangouts Logo](https://openhangouts-21450.onmodulus.net/system/assets/img/logo.png)](https://openhangouts.uni.me/)
 
 # OpenHangouts
 
