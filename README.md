@@ -47,6 +47,13 @@ Simply clone the project in your web directory
 git clone git@github.com:overlox/openhangouts.git
 ```
 
+Install the package managers
+
+```sh
+npm install -g bower
+npm install -g grunt-cli
+```
+
 From a clean mean stack installation
 ------------
 Install the mean package with the following command
@@ -69,6 +76,14 @@ Running the project
 ```sh
 grunt
 ```
+
+Troubleshooting
+------------
+
+For problems with the MEAN Stack
+
+    https://github.com/linnovate/mean#troubleshooting
+
 
 ## License
 [The MIT License](http://opensource.org/licenses/MIT)
