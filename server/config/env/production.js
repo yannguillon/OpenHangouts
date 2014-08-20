@@ -6,6 +6,10 @@ dotenv.load();
 try {
     var fbid = process.env.OPENHANGOUTS_FACEBOOK_APP_ID,
         fbsecret = process.env.OPENHANGOUTS_FACEBOOK_APP_SECRET;
+    var twitterid = process.env.OPENHANGOUTS_TWITTER_APP_ID,
+        twittersecret = process.env.OPENHANGOUTS_TWITTER_APP_SECRET;
+    var githubid = process.env.OPENHANGOUTS_GITHUB_APP_ID,
+        githubsecret = process.env.OPENHANGOUTS_GITHUB_APP_SECRET;
 }
 catch (err){
     console.log('Facebook app identifiers missing in env - please export the right parameters');
@@ -20,22 +24,22 @@ module.exports = {
     facebook: {
         clientID: fbid,
         clientSecret: fbsecret,
-        callbackURL: 'https://localhost:3000/auth/facebook/callback'
+        callbackURL: 'https://openhangouts-21450.onmodulus.net/auth/facebook/callback'
     },
     twitter: {
-        clientID: 'CONSUMER_KEY',
-        clientSecret: 'CONSUMER_SECRET',
-        callbackURL: 'http://localhost:3000/auth/twitter/callback'
+        clientID: twitterid,
+        clientSecret: twittersecret,
+        callbackURL: 'https://openhangouts-21450.onmodulus.net/auth/twitter/callback'
     },
     github: {
-        clientID: 'APP_ID',
-        clientSecret: 'APP_SECRET',
-        callbackURL: 'http://localhost:3000/auth/github/callback'
+        clientID: githubid,
+        clientSecret: githubsecret,
+        callbackURL: 'https://openhangouts-21450.onmodulus.net/auth/github/callback'
     },
     google: {
         clientID: 'APP_ID',
         clientSecret: 'APP_SECRET',
-        callbackURL: 'http://localhost:3000/auth/google/callback'
+        callbackURL: 'https://openhangouts-21450.onmodulus.net/'
     },
     linkedin: {
         clientID: 'API_KEY',

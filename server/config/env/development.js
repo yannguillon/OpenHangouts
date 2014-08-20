@@ -6,6 +6,10 @@ dotenv.load();
 try {
     var fbid = process.env.OPENHANGOUTS_FACEBOOK_APP_ID,
         fbsecret = process.env.OPENHANGOUTS_FACEBOOK_APP_SECRET;
+    var twitterid = process.env.OPENHANGOUTS_TWITTER_APP_ID,
+        twittersecret = process.env.OPENHANGOUTS_TWITTER_APP_SECRET;
+    var githubid = process.env.OPENHANGOUTS_GITHUB_APP_ID,
+        githubsecret = process.env.OPENHANGOUTS_GITHUB_APP_SECRET;
 }
 catch (err){
     console.log('Facebook app identifiers missing in env - please export the right parameters');
@@ -23,14 +27,14 @@ module.exports = {
         callbackURL: 'https://localhost:3000/auth/facebook/callback'
     },
     twitter: {
-        clientID: 'CONSUMER_KEY',
-        clientSecret: 'CONSUMER_SECRET',
-        callbackURL: 'http://localhost:3000/auth/twitter/callback'
+        clientID: twitterid,
+        clientSecret: twittersecret,
+        callbackURL: 'https://localhost:3000/auth/twitter/callback'
     },
     github: {
-        clientID: 'APP_ID',
-        clientSecret: 'APP_SECRET',
-        callbackURL: 'http://localhost:3000/auth/github/callback'
+        clientID: githubid,
+        clientSecret: githubsecret,
+        callbackURL: 'https://localhost:3000/auth/github/callback'
     },
     google: {
         clientID: 'APP_ID',

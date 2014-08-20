@@ -6,6 +6,7 @@ angular.module('mean.system').controller('VideoController', ['$rootScope', '$sco
             $scope.myuser = WebRTC.getMyUser();
             $scope.users = WebRTC.getUsers();
             $scope.screen = WebRTC.getScreen();
+            $scope.errors = WebRTC.getErrors();
             $scope.$apply();
         });
 

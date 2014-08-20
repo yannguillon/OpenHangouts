@@ -75,6 +75,43 @@ angular.module('mean.system').
 //        };
 
 
+        /////////////////////////// TO COPY
+        self.errors = {};
+
+        connection.DetectRTC.load(function() {
+            if(!connection.DetectRTC.hasMicrophone) {
+                self.errors['nomic'] = "No microphone found";
+                notifyObservers();
+            }
+            else
+                delete self.errors["nomic"];
+            if(!connection.DetectRTC.hasWebcam) {
+                self.errors['nowebcam'] = "No webcam found";
+                notifyObservers();
+            }
+            else
+                delete self.errors["nowebcam"];
+        });
+
+        connection.DetectRTC.screen.isChromeExtensionAvailable(function(available) {
+            if (connection.UA.Firefox)
+            {
+                self.errors['nomic'] = "Screensharing is not yet implemented on firefox - please install chrome for a full WebRTC experience";
+                notifyObservers();
+            }
+
+            if(!available && connection.UA.Chrome) {
+                delete self.errors["noext"];
+                self.errors['noext'] = "You may need to install the screen-sharing plugin from Chrome if you did not start your browser with the proper flags";
+            }
+            else
+                delete self.errors["noext"];
+            notifyObservers();
+        });
+
+        /////////////////////////////
+
+
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
             var sender = Global.user._id;
@@ -267,6 +304,7 @@ angular.module('mean.system').
 
         return {
             getUsers: function(){return self.users;},
+            getErrors: function(){return self.errors;},
             getScreen: function(){console.log(self.screen); return self.screen;},
             getMyUser: function(){return self.myuser;},
             createRoom: function (roomId) {

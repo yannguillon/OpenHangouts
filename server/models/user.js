@@ -21,11 +21,11 @@ var validatePresenceOf = function(value) {
 var UserSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: false
     },
     email: {
         type: String,
-        required: true,
+        required: false,
         match: [/.+\@.+\..+/, 'Please enter a valid email']
     },
     username: {
