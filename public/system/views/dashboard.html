@@ -1,7 +1,7 @@
-<section data-ng-controller="DashboardController">
+<section data-ng-controller="DashboardController" class='section-padding'>
     <div ng-controller="VideoController as video">
 
-        <div style="top:99px; width:80%;padding:5px;margin-top:25px;background-color:rgba(242,242,242,0.5);border-radius:10px" class="room-controls">
+        <div style="width:70%;padding:5px;margin-left:10px;background-color:rgba(242,242,242,0.5);border-radius:10px" class="room-controls">
             <button class="create-room btn btn-default btn-sm" id="{{getRandom()}}">Open NEW Room</button>
             <input  style="height:33px;"  type="text" name="country" value="{{getRandom()}}" readonly>
             <button class="join-room btn btn-default btn-sm" >Join Room</button>

@@ -54,7 +54,7 @@ angular.module('mean.controllers.login', [])
                         $scope.registerError = 0;
                         $rootScope.user = $scope.user;
                         $rootScope.$emit('loggedin');
-                        $location.url('/dashboard');
+                        $location.url('/');
                     })
                     .error(function(error) {
                         // Error: authentication failed
