@@ -7,15 +7,18 @@ var rootPath = path.normalize(__dirname + '/../../..');
 var fs = require('fs'),
     dotenv = require('dotenv');
 dotenv.load();
-    
+
+
+var key;
+var certificate;
 try {
-    var key = fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH),
-        certificate = fs.readFileSync(process.env.NODE_CERTIFICATE_PATH);
+   key = fs.readFileSync(process.env.NODE_PRIVATEKEY_PATH);
+  certificate = fs.readFileSync(process.env.NODE_CERTIFICATE_PATH);
 }
 catch (err){
     try {
-        var key = process.env.NODE_PRIVATEKEY,
-            certificate = process.env.NODE_CERTIFICATE;
+        key = process.env.NODE_PRIVATEKEY;
+        certificate = process.env.NODE_CERTIFICATE;
     }
     catch (err){
         console.log('HTTPS key and/or certificate path missing or not found - please export the right parameters');

@@ -3,6 +3,10 @@
  */
 'use strict';
 
+/*global RTCMultiConnection */
+/*global io */
+
+
 angular.module('mean.system').
     factory('WebRTC', ['Global', 'mySocket', '$window', '$sce', function (Global, mySocket, $window, $sce) {
         var self = this;
@@ -25,13 +29,11 @@ angular.module('mean.system').
         self.myuser = null;
         self.screen = null;
         self.mysock = null;
-        self.fake_screen = false;
         connection.session = {
             audio: true,
             video: true
         };
 
-        //Clean : check if we need the id variable.
         connection.extra = {
             username: Global.user.username,
             fullname: Global.user.name,
@@ -43,79 +45,42 @@ angular.module('mean.system').
 
         };
 
-
-//        var onMessageCallbacks = {};
-//        var socketio = io.connect(SIGNALING_SERVER);
-//
-//        socketio.on('message', function(data) {
-//            if(data.sender == connection.userid) return;
-//            onMessageCallbacks[data.channel](data.message);
-//            console.log(data.message);
-////            if (onMessageCallbacks[data.channel]) {
-////                onMessageCallbacks[data.channel](data.message);
-////            };
-//        });
-
-//        connection.openSignalingChannel = function (config) {
-//            var channel = config.channel || this.channel;
-//            onMessageCallbacks[channel] = config.onmessage;
-//
-//            if (config.onopen) setTimeout(config.onopen, 1000);
-//            return {
-//                send: function (message) {
-//                    socketio.emit('message', {
-//                        sender: connection.userid,
-//                        username: connection.extra.fullname,
-//                        channel: channel,
-//                        message: message
-//                    });
-//                },
-//                channel: channel
-//            };
-//        };
-
-
-        /////////////////////////// TO COPY
         self.errors = {};
 
         connection.DetectRTC.load(function() {
             if(!connection.DetectRTC.hasMicrophone) {
-                self.errors['nomic'] = "No microphone found";
+                self.errors.nomic = 'No microphone found';
                 notifyObservers();
             }
             else
-                delete self.errors["nomic"];
+                delete self.errors.nomic;
             if(!connection.DetectRTC.hasWebcam) {
-                self.errors['nowebcam'] = "No webcam found";
+                self.errors.nowebcam = 'No webcam found';
                 notifyObservers();
             }
             else
-                delete self.errors["nowebcam"];
+                delete self.errors.nowebcam;
         });
 
         connection.DetectRTC.screen.isChromeExtensionAvailable(function(available) {
             if (connection.UA.Firefox)
             {
-                self.errors['nomic'] = "Screensharing is not yet implemented on firefox - please install chrome for a full WebRTC experience";
+                self.errors.nomic = 'Screensharing is not yet implemented on firefox - please install chrome for a full WebRTC experience';
                 notifyObservers();
             }
 
             if(!available && connection.UA.Chrome) {
-                delete self.errors["noext"];
-                self.errors['noext'] = "You may need to install the screen-sharing plugin from Chrome if you did not start your browser with the proper flags";
+                delete self.errors.noext;
+                self.errors.noext = 'You may need to install the screen-sharing plugin from Chrome if you did not start your browser with the proper flags';
             }
             else
-                delete self.errors["noext"];
+                delete self.errors.noext;
             notifyObservers();
         });
-
-        /////////////////////////////
-
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
             var sender = Global.user._id;
-            console.log("client wants channel : " + channel);
             io.connect(SIGNALING_SERVER).emit('new-channel', {
                 channel: channel,
                 sender: sender
@@ -127,9 +92,6 @@ angular.module('mean.system').
                 if (config.callback) config.callback(socket);
             });
 
-
-
-
             socket.send = function(message) {
                 socket.emit('message', {
                     sender: sender,
@@ -137,10 +99,8 @@ angular.module('mean.system').
                 });
             };
             socket.on('message', config.onmessage);
-
             connection.socket = socket;
         };
-
 
         var openCustomActionsChannel = function(channel, connection)
         {
@@ -151,16 +111,12 @@ angular.module('mean.system').
 
             self.mysock = io.connect(SIGNALING_SERVER + channel, {custom : true});
             self.mysock.setPresenter = function(id){
-//                if (self.screenStream !== null){
-
-//                }
                 self.mysock.emit('setPresenter', {
                     id: id
-                })
+                });
             };
 
             self.mysock.on('presenterGiven', function(id){
-                console.log("Presenter Given called");
                 if (id === Global.user._id){
                     connection.extra.isPresenter = true;
                     self.myuser.isPresenter = true;
@@ -182,25 +138,19 @@ angular.module('mean.system').
                 }
                 notifyObservers();
             });
-        }
+        };
 
 
         var onOpen = function (roomId) {
-            console.log("---> onOpen() triggered- Room created with id:" + roomId);
             connection.open(roomId);
             openCustomActionsChannel(roomId, connection);
-            console.log("current session :");
-            console.log(connection.sessionid);
         };
 
         var onJoin = function(roomId)
         {
-            console.log("---> join() called - joined room: "+ roomId);
             connection.join(roomId);
             openCustomActionsChannel(roomId, connection);
-            console.log("current session :");
-            console.log(connection.sessionid);
-        }
+        };
 
         connection.streams.mute({
             audio: true,
@@ -209,26 +159,17 @@ angular.module('mean.system').
         });
 
         connection.onstream = function(e) {
-            if((e.type == 'local' || e.type == 'remote') && e.isScreen) {
-                if (e.type == 'local') {
+            var url;
+            if((e.type === 'local' || e.type === 'remote') && e.isScreen) {
+                if (e.type === 'local') {
                     self.screenStream = e.streamid;
                 }
-                var url = $window.URL.createObjectURL(e.stream);
-                console.log("screen added");
+                url = $window.URL.createObjectURL(e.stream);
                 self.screen = {'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'screen', 'stream': $sce.trustAsResourceUrl(url)};
                 notifyObservers();
             }
-//            else if (e.type == 'local' && e.isVideo)
-//            {
-//                console.log("needs mute");
-//                connection.streams[e.streamid].mute({
-//                    audio: true,
-//                    video: true
-//                });
-//            }
-
             else if (e.type === 'local') {
-                var url = $window.URL.createObjectURL(e.stream);
+                url = $window.URL.createObjectURL(e.stream);
                 if (connection.isInitiator)
                     connection.extra.isPresenter = true;
                 self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url), 'isPresenter' : connection.extra.isPresenter};
@@ -236,16 +177,11 @@ angular.module('mean.system').
 
             }
             else if (e.type === 'remote') {
-                var url = $window.URL.createObjectURL(e.stream);
+                url = $window.URL.createObjectURL(e.stream);
                 self.users.push({'id': e.extra.id, 'username': e.extra.username, 'stream-type': 'video', 'stream': $sce.trustAsResourceUrl(url), 'isPresenter' : e.extra.isPresenter});
                 notifyObservers();
             }
         };
-
-//        connection.onleave = function(e) {
-//
-//        }
-
 
         connection.onstreamended = function(e) {
             if (e.isScreen) {
@@ -253,8 +189,6 @@ angular.module('mean.system').
                     connection.removeStream(e.streamid);
                     (connection.streams[e.streamid]).stop();
                     self.screenStream = null;
-                    console.log("streams");
-                    console.log(connection.streams);
                 }
                 self.screen = null;
                 notifyObservers();
@@ -262,8 +196,7 @@ angular.module('mean.system').
             else {
                 console.log(self.users);
                 for (var i = 0; i < self.users.length; i++) {
-                    console.log((self.users[i]).id + " == " + e.extra.id);
-                    if ((self.users[i]).id == e.extra.id) {
+                    if ((self.users[i]).id === e.extra.id) {
                         self.users.splice(i, 1);
                         console.log(self.users);
                         notifyObservers();
@@ -271,23 +204,7 @@ angular.module('mean.system').
                     }
                 }
             }
-//            console.log("stream removed : type : " + e.type );
-//            if (e.type === 'local'){
-//                if (e.isAudio){
-//                    console.log("audio");
-//                    self.audioStream = null;
-//                }
-//                if (e.isVideo){
-//                    console.log("video");
-//                    self.videoStream = null;
-//                }
-//                if (e.isScreen){
-//                    console.log("screen");
-//                    self.screenStream = null;
-//                }
-//            }
         };
-
 
         connection.onleave = function(userid, extra) {
             if (extra) console.log(extra.username + ' left you!');
@@ -295,24 +212,15 @@ angular.module('mean.system').
             if (video) video.parentNode.removeChild(video);
         };
 
-
-
-
-
-//        // on signaling channel called
-//        console.log("connect() called - Waiting for rooms to open");
-
         return {
             getUsers: function(){return self.users;},
             getErrors: function(){return self.errors;},
             getScreen: function(){console.log(self.screen); return self.screen;},
             getMyUser: function(){return self.myuser;},
             createRoom: function (roomId) {
-//                connection.connect();
                 onOpen(roomId);
             },
             joinRoom: function(roomId) {
-//                connection.connect();
                 onJoin(roomId);
             },
             switchPresenter: function(id){

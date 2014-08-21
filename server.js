@@ -6,8 +6,7 @@
 var mongoose = require('mongoose'),
     passport = require('passport'),
     logger = require('mean-logger'),
-    https = require('https'),
-    http = require('http');
+    https = require('https');
 
 /**
  * Main application entry file.
@@ -29,10 +28,11 @@ var socket = boot.socket;
 conn.once('open', function() {
 
 //    app.https({key: config.key, cert: config.cert}).listen(config.port, config.hostname);
+    var s;
     if (config.key){
-	    var s = https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
+	    s = https.createServer({key: config.key, cert: config.cert}, app).listen(config.port, config.hostname);
     }else{
-    	var s = app.listen(config.port, config.hostname);
+    	s = app.listen(config.port, config.hostname);
     }
     socket.listen(s);
     console.log('MEAN app started on port ' + config.port + ' (' + process.env.NODE_ENV + ')');

@@ -3,36 +3,27 @@
  */
 'use strict';
 
-angular.module('mean.system').controller('DashboardController', ['$scope', 'Global', 'WebRTC', '$compile',
-    function ($scope, Global, WebRTC, $compile) {
+angular.module('mean.system').controller('DashboardController', ['$scope', 'Global', 'WebRTC',
+    function ($scope, Global, WebRTC) {
         $scope.global = Global;
-        this.channel = "";
- 
+        this.channel = '';
+        $scope.randomroom = Math.floor(Math.random()*100000 + 50);
+        this.definedroom = '';
+
         this.joinChannel = function(){
             console.log(this.channel);
         };
 
-
-        var random = Math.floor(Math.random()*100000 + 50);
         $scope.getRandom = function(){
-            return random;
-        }
+            return $scope.randomroom;
+        };
 
-        $('.create-room').on('click', function() {
-            WebRTC.createRoom($(this).attr('id'));
-        });
+        $scope.createRoom = function(){
+            WebRTC.createRoom($scope.randomroom);
+        };
 
-        $('.join-room').on('click', function() {
-            WebRTC.joinRoom($('#room-id').val());
-        });
-
-//        $(function(){
-//            alert("jquery is loaded");
-//        });
-//        document.getElementByClassName('switch-presenter').onclick = function() {
-//            alert("presentouse needs a switch");
-//        };
-
-        // et quand je call switch-presenter on click rien ne se passe
+        $scope.joinRoom = function(){
+            WebRTC.joinRoom($scope.definedroom);
+        };
     }
 ]);
