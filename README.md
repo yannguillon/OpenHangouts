@@ -35,6 +35,13 @@ export OPENHANGOUTS_SERVICE_NAME_UNDERSCORED_APP_ID='xx'
 export OPENHANGOUTS_SERVICE_NAME_UNDERSCORED_APP_SECRET='xx'
 ```
 
+Set your MongoDB settings (for production only)
+
+```sh
+export MONGODB_USER='xx'
+export MONGODB_PASS='xx'
+```
+
 
 Installation
 -------------
@@ -54,12 +61,12 @@ npm install -g bower
 npm install -g grunt-cli
 ```
 
-From a clean mean stack installation
+From a clean mean stack installation (work in progress)
 ------------
 Install the mean package with the following command
 
 ```sh
-mean package openHangouts;
+npm install mean-hangouts
 ```
 
 

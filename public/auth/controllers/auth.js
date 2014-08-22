@@ -25,7 +25,6 @@ angular.module('mean.controllers.login', [])
                                 window.location = response.redirect;
                             }
                         } else {
-                            console.log('passe par la ');
                             window.location = '/';
                         }
                     })

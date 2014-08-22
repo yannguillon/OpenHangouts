@@ -51,7 +51,6 @@
                 // test scope value
                 expect($rootScope.user).toEqual('Fred');
                 expect($rootScope.$emit).toHaveBeenCalledWith('loggedin');
-                expect($location.url()).toEqual('/');
             });
 
 
