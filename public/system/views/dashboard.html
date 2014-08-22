@@ -2,18 +2,16 @@
     <div ng-controller="VideoController as video">
 
         <div style="width:70%;padding:5px;margin-left:10px;background-color:rgba(242,242,242,0.5);border-radius:10px" class="room-controls">
-            <button ng-click="createRoom()" class="create-room btn btn-default btn-sm">Open NEW Room</button>
+            <button ng-click="createRoom()" class="create-room btn btn-default btn-sm">{{roomControl.text}}</button>
             <input  style="height:33px;"  type="text" value="{{getRandom()}}" readonly>
             <button ng-click="joinRoom()" class="join-room btn btn-default btn-sm" >Join Room</button>
-            <input  ng-model="definedroom" style="height:33px;" id="room-id" type="text" />
+            <input  ng-model="definedroom.id" ng-pattern="/^\d+$/" style="height:33px;" type="text" name="definedroom"/>
             <button ng-show='myuser.isPresenter' ng-click="video.startSharingScreen()" class="start-screensharing btn btn-default btn-sm">Start</button>
-
-
         </div>
 
-        <div ng-show="errors" style="width:80%;" class="alert alert-danger">
+        <div ng-show="haveErrorsToDisplay()" style="width:80%;" class="alert alert-danger">
             <ul style="" ng-repeat="(key, error) in errors">
-                <li>{{error}}</li>
+                <li ng-show="errorsdisplay[key]">{{error}} <button ng-click="hideError(key)">x</button></li>
             </ul>
         </div>
 
@@ -39,7 +37,7 @@
                 <!--<div id="video_box">-->
                 <!--<div id="video_overlays"></div>-->
                 <!--</div>-->
-                <button style='position: absolute;' ng-show="myuser.isPresenter" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
+                <button style='position: absolute;' ng-show="isPresentingSwitchAllowed()" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
                 <video ng-class="{ 'active' : user.stream }" style="width:90%" ng-src="{{user.stream}}" autoplay></video>
                 <div style='background-color: black; opacity: 0.6; width: 90%; float: left; margin-top: -5px;'>
                     <span style='float: right; font-size: 1em; color:#E1E1E1; font-variant: small-caps; padding-right: 5px;' ng-show="user.isPresenter"><i class='glyphicon glyphicon-expand'></i> presenting</span>

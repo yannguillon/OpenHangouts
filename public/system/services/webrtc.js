@@ -10,10 +10,9 @@
 angular.module('mean.system').
     factory('WebRTC', ['Global', 'mySocket', '$window', '$sce', function (Global, mySocket, $window, $sce) {
         var self = this;
-        var SIGNALING_SERVER = '/',
-            defaultChannel = 'default-channel';
-        self.socket = null;
-        var connection = new RTCMultiConnection(defaultChannel);
+
+        // Angular JS callbacks on user modifications
+
         var observerCallbacks = [];
         var notifyObservers = function(){
             angular.forEach(observerCallbacks, function(callback){
@@ -21,14 +20,26 @@ angular.module('mean.system').
             });
         };
 
+        // WebRTC service variables
+
         self.videoStream = null;
         self.audioStream = null;
         self.screenStream = null;
-
         self.users = [];
+        self.errors = {};
         self.myuser = null;
         self.screen = null;
         self.mysock = null;
+
+        // RTCMultiConnection initialization
+
+        var SIGNALING_SERVER = '/',
+            defaultChannel = 'default-channel';
+        var connection = new RTCMultiConnection(defaultChannel);
+
+        connection.leaveOnPageUnload = true;
+        connection.autoCloseEntireSession = true;
+
         connection.session = {
             audio: true,
             video: true
@@ -38,14 +49,12 @@ angular.module('mean.system').
             username: Global.user.username,
             fullname: Global.user.name,
             id: Global.user._id,
-            isPresenter: false
+            isPresenter: false,
+            isInitiator: false,
+            screensharing: false
         };
 
-        self.switchPresenter = function(id) {
-
-        };
-
-        self.errors = {};
+        // Errors detection
 
         connection.DetectRTC.load(function() {
             if(!connection.DetectRTC.hasMicrophone) {
@@ -77,6 +86,8 @@ angular.module('mean.system').
                 delete self.errors.noext;
             notifyObservers();
         });
+
+        // WebSocket Signalling overrides
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
@@ -140,6 +151,7 @@ angular.module('mean.system').
             });
         };
 
+        // Bindings on the opening and joining of a Room
 
         var onOpen = function (roomId) {
             connection.open(roomId);
@@ -151,6 +163,9 @@ angular.module('mean.system').
             connection.join(roomId);
             openCustomActionsChannel(roomId, connection);
         };
+
+
+        // Streams management
 
         connection.streams.mute({
             audio: true,
@@ -170,8 +185,10 @@ angular.module('mean.system').
             }
             else if (e.type === 'local') {
                 url = $window.URL.createObjectURL(e.stream);
-                if (connection.isInitiator)
+                if (connection.isInitiator) {
                     connection.extra.isPresenter = true;
+                    connection.extra.isInitiator = true;
+                }
                 self.myuser = {'id' : e.extra.id, 'username' : e.extra.username, 'stream' : $sce.trustAsResourceUrl(url), 'isPresenter' : connection.extra.isPresenter};
                 notifyObservers();
 
@@ -183,9 +200,25 @@ angular.module('mean.system').
             }
         };
 
+
+        connection.onSessionClosed = function(session) {
+                self.errors.inititator_stop = 'Session interrupted - The initiator stopped the session';
+                notifyObservers();
+        };
+        connection.onleave = function(e)
+        {
+            if (e.extra.isInitiator)
+            {
+                connection.drop();
+                self.errors.inititator_left = 'Session interrupted - The initiator left the channel';
+                notifyObservers();
+            }
+        };
+
         connection.onstreamended = function(e) {
             if (e.isScreen) {
                 if (e.type === 'local') {
+                    connection.extra.screensharing = false;
                     connection.removeStream(e.streamid);
                     (connection.streams[e.streamid]).stop();
                     self.screenStream = null;
@@ -194,23 +227,18 @@ angular.module('mean.system').
                 notifyObservers();
             }
             else {
-                console.log(self.users);
                 for (var i = 0; i < self.users.length; i++) {
                     if ((self.users[i]).id === e.extra.id) {
                         self.users.splice(i, 1);
                         console.log(self.users);
-                        notifyObservers();
                         return;
                     }
                 }
             }
         };
 
-        connection.onleave = function(userid, extra) {
-            if (extra) console.log(extra.username + ' left you!');
-            var video = document.getElementById(userid);
-            if (video) video.parentNode.removeChild(video);
-        };
+
+        // Methods exposed to AngularJS controllers
 
         return {
             getUsers: function(){return self.users;},
@@ -219,6 +247,9 @@ angular.module('mean.system').
             getMyUser: function(){return self.myuser;},
             createRoom: function (roomId) {
                 onOpen(roomId);
+            },
+            stopRoom: function () {
+                connection.close();
             },
             joinRoom: function(roomId) {
                 onJoin(roomId);
@@ -229,7 +260,11 @@ angular.module('mean.system').
             registerObserverCallback: function(callback){
                 observerCallbacks.push(callback);
             },
+            isScreensharingEnabled: function(){
+                return connection.extra.screensharing;
+            },
             startSharingScreen: function(){
+                connection.extra.screensharing = true;
                 connection.addStream({
                     screen: true,
                     oneway: true

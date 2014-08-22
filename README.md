@@ -97,6 +97,11 @@ More information about flags at
 
     http://www.chromium.org/developers/how-tos/run-chromium-with-flags
 
+Known bugs
+-------------
+RTCMulticonnection :
+SDP error on the second screen-share of each user.
+
 Troubleshooting
 ------------
 

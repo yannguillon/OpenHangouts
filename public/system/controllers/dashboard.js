@@ -8,22 +8,26 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
         $scope.global = Global;
         this.channel = '';
         $scope.randomroom = Math.floor(Math.random()*100000 + 50);
-        this.definedroom = '';
-
-        this.joinChannel = function(){
-            console.log(this.channel);
-        };
+        $scope.definedroom = { id: '' };
+        $scope.roomControl = {started: false, text : "Open a NEW Room"};
 
         $scope.getRandom = function(){
             return $scope.randomroom;
         };
 
         $scope.createRoom = function(){
-            WebRTC.createRoom($scope.randomroom);
+            if ($scope.roomControl.started === false) {
+                WebRTC.createRoom(''+$scope.randomroom);
+                $scope.roomControl = {started: true, text: "Stop current Room"};
+            }
+            else {
+                WebRTC.stopRoom();
+                $scope.roomControl = {started: false, text: "Open a NEW Room"};
+            }
         };
 
         $scope.joinRoom = function(){
-            WebRTC.joinRoom($scope.definedroom);
+            WebRTC.joinRoom($scope.definedroom.id);
         };
     }
 ]);
