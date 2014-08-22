@@ -30,6 +30,7 @@ angular.module('mean.system').
         self.myuser = null;
         self.screen = null;
         self.mysock = null;
+        self.channels = {};
 
         // RTCMultiConnection initialization
 
@@ -91,6 +92,7 @@ angular.module('mean.system').
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
+            self.channels[channel] = channel;
             var sender = Global.user._id;
             io.connect(SIGNALING_SERVER).emit('new-channel', {
                 channel: channel,
@@ -119,7 +121,7 @@ angular.module('mean.system').
                 channel: channel,
                 sender:  Global.user._id
             });
-
+            self.channels[channel] = channel;
             self.mysock = io.connect(SIGNALING_SERVER + channel, {custom : true});
             self.mysock.setPresenter = function(id){
                 self.mysock.emit('setPresenter', {
@@ -138,7 +140,6 @@ angular.module('mean.system').
                 }
                 notifyObservers();
             });
-
             self.mysock.on('newPresenterSet', function(id){
                 if (connection.extra.isPresenter === true){
                     connection.extra.isPresenter = false;
@@ -202,10 +203,14 @@ angular.module('mean.system').
 
 
         connection.onSessionClosed = function(session) {
+            io.connect(SIGNALING_SERVER).emit('delete-channel', {
+                channel: self.channels
+            });
                 self.errors.inititator_stop = 'Session interrupted - The initiator stopped the session';
                 notifyObservers();
         };
-        connection.onleave = function(e)
+
+        connection.onLeave = function(e)
         {
             if (e.extra.isInitiator)
             {

@@ -5,24 +5,27 @@ var channelsController = require('../../controllers/channels');
 module.exports = function(io) {
 
     io.on('connection', function (socket) {
-        var initiatorChannel = '';
         if (!io.isConnected) {
             io.isConnected = true;
             socket.emit('connect', true);
         }
 
+        socket.on('delete-channel', function (channels) {
+            for (var key in channels)
+                channelsController.delete(channels[key].toString());
+        });
+
         socket.on('new-channel', function (data) {
             channelsController.showAllChannels();
             if (!channelsController.findChannel(data.channel.toString())){
-                initiatorChannel = data.channel;
                 onNewNamespace(data.channel, data.sender);
             }
             channelsController.create(data.channel.toString());
+
         });
 
         socket.on('new-custom-channel', function (data) {
             if (!channelsController.findChannel(data.channel.toString())) {
-                initiatorChannel = data.channel;
                 onNewNamespaceCustom(data.channel, data.sender);
             }
             channelsController.create(data.channel.toString());
@@ -38,11 +41,6 @@ module.exports = function(io) {
             socket.emit('presence', isChannelPresent);
         });
 
-        socket.on('disconnect', function (channel) {
-            if (initiatorChannel) {
-                channelsController.delete(initiatorChannel.toString());
-            }
-        });
     });
 
 
