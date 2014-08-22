@@ -1,69 +1,8 @@
 'use strict';
 
-//var mean = require('meanio');
-
-
-// library to separate
-
-//function room_exists(rooms, room)
-//{
-//    return rooms.some(function (obj) {
-//        return obj.id === room.id;
-//    });
-//}
-
-////////////////////////////////////
-
+var channelsController = require('../../controllers/channels');
 
 module.exports = function(io) {
-
-
-
-
-
-    // experiments > gonna be useful
-//    var rooms = [];
-//    function Room(id, presenter) {
-//        this.id = id;
-//        this.presenter = presenter;
-//        this.users = [];
-//        }
-//
-//
-//    io.on('connection', function(socket) {
-//        socket.emit('news', { hello: 'world' });
-//        socket.on('my other event', function (data) {
-//            console.log(data);
-//        });
-//
-//        socket.on('create', function(presenter) {
-//            var room = new Room(new Date().getTime(), presenter);
-//            console.log('creating room', room);
-//            room.presenter = presenter;
-//            rooms.push(room);
-//            console.log(rooms);
-//            socket.join(room);
-//            io.sockets.in(room).emit('message', 'Room created :D');
-//        })
-//
-//
-//    });
-
-//
-//    var io = require('socket.io').listen(app, {
-//        log: true,
-//        origins: '*:*'
-//    });
-//
-//
-//
-
-
-
-
-
-    var channels = {};
-//    var self = this;
 
     io.on('connection', function (socket) {
         var initiatorChannel = '';
@@ -73,26 +12,21 @@ module.exports = function(io) {
         }
 
         socket.on('new-channel', function (data) {
-            if (!channels[data.channel]) {
+            channelsController.showAllChannels();
+            if (!channelsController.findChannel(data.channel.toString())){
                 initiatorChannel = data.channel;
+                onNewNamespace(data.channel, data.sender);
             }
-            channels[data.channel] = data.channel;
-            onNewNamespace(data.channel, data.sender);
+            channelsController.create(data.channel.toString());
         });
 
         socket.on('new-custom-channel', function (data) {
-            if (!channels[data.channel]) {
+            if (!channelsController.findChannel(data.channel.toString())) {
                 initiatorChannel = data.channel;
                 onNewNamespaceCustom(data.channel, data.sender);
             }
-            channels[data.channel] = data.channel;
+            channelsController.create(data.channel.toString());
         });
-
-
-//        socket.on('new-channel', function (data) {
-//            console.log('rerouting to channel: ' + data.channel);
-//            onNewNamespace(data.channel, data.sender);
-//        });
 
         socket.on('message', function (data) {
             socket.broadcast.emit('message', data.data);
@@ -100,21 +34,15 @@ module.exports = function(io) {
 
 
         socket.on('presence', function (channel) {
-            var isChannelPresent = !! channels[channel];
+            var isChannelPresent = !! channelsController.findChannel(channel.toString());
             socket.emit('presence', isChannelPresent);
         });
 
         socket.on('disconnect', function (channel) {
             if (initiatorChannel) {
-                delete channels[initiatorChannel];
+                channelsController.delete(initiatorChannel.toString());
             }
         });
-
-//        socket.on('setPresenter', function(userid){
-//            console.log("presenter switch");
-//            socket.emit('presenterGiven');
-//        });
-
     });
 
 
@@ -138,7 +66,6 @@ module.exports = function(io) {
                 socket.emit('connect', true);
             }
 
-
             socket.on('message', function (data) {
                 if (data.sender === sender) {
                     if(!username) username = data.data.sender;
@@ -155,44 +82,4 @@ module.exports = function(io) {
             });
         });
     }
-
-//};
-//
-//    function inArray(value, array) {
-//      for (var i = 0; i < array.length; i++) {
-//        if (array[i] == value)
-//            return true;
-//      }
-//      return false;
-//    }
-//
-//
-//    var usersRooms = {};
-//
-//    io.on('connection', function (socket) {
-//        socket.on('message', function (data) {
-//            if (!usersRooms[data.sender]){
-//                usersRooms[data.sender] = new Array(data.channel);
-//            }else if (!inArray(data.channel, usersRooms[data.sender])){
-//                (usersRooms[data.sender]).push(data.channel);
-//            }
-//
-//            console.log(usersRooms);
-//            console.log(data);
-//            console.log("TA MERE LE CHANNEL = " + data.channel + " called by " + data.username);
-//
-//            for (var i = 0; i < usersRooms[data.sender].length; i++){
-//                socket.join(usersRooms[data.sender][i]);
-//                socket.broadcast.to(usersRooms[data.sender][i]).emit('message', data);
-//            }
-//
-////            if (channels[data.channel])
-////            {
-////
-////            }
-////            socket.broadcast.emit('message', data);
-////            socket.leave(data.channel);
-//        });
-//    });
-
 };
