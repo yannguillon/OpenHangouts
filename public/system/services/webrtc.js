@@ -92,7 +92,8 @@ angular.module('mean.system').
 
         connection.openSignalingChannel = function(config) {
             var channel = config.channel || defaultChannel;
-            self.channels[channel] = channel;
+            if (channel !== defaultChannel)
+                self.channels[channel] = channel;
             var sender = Global.user._id;
             io.connect(SIGNALING_SERVER).emit('new-channel', {
                 channel: channel,

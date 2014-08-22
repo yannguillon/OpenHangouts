@@ -11,8 +11,10 @@ module.exports = function(io) {
         }
 
         socket.on('delete-channel', function (channels) {
-            for (var key in channels)
-                channelsController.delete(channels[key].toString());
+            for (var key in channels.channel){
+                channelsController.delete(key);
+            }
+            channelsController.showAllChannels();
         });
 
         socket.on('new-channel', function (data) {

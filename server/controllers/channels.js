@@ -25,7 +25,9 @@ exports.create = function(channel_id) {
 exports.delete = function(channel_id) {
 	console.log('try to delete a channel : ' + channel_id);
 	Channel.remove({ channel_id: channel_id }, function (err) {
-		console.log('Error when deleting the channel');
+		if (err)
+			console.log('Error when deleting the channel');
+		console.log('channel has been deleted');
 	});
 	Channel.find().exec(function (err, channel) {
 		if (err)
