@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="https://www.facebook.com/2008/fbml" itemscope="itemscope" itemtype="http://schema.org/Product">
 {% include '../includes/head.html' %}
 
-<body style='height: 100%'>
+<body style='height: 100%; position:relative'>
     <div class="navbar navbar-default navbar-fixed-top" data-ng-include="'/system/views/header.html'" data-role="navigation"></div>
     {% if adminEnabled %}
     <section class="admin-menu">
@@ -25,6 +25,8 @@
             </section>
         </section>
     {% endif %}
+    <div class='feedback-button'><a href='https://docs.google.com/forms/d/1hOv6HujHMpewnusbdsI_NSNlG_gP70dvpsXDvGSK2Wg/viewform?usp=send_form'>Feedbacks</a></div>
+
 
     {% include '../includes/foot.html' %}
 </body>

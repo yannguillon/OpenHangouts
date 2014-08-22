@@ -7,6 +7,9 @@
 
   <div class="left pull-left">
     <ul class="navbar-nav nav">
+      <li ng-show="dashboardMenu" ui-route="/{{dashboardMenu.title}}" ng-class="{active: $uiRoute}">
+        <a ui-sref='{{dashboardMenu.href}}'>{{dashboardMenu.title}}</a>
+      </li>
       <li data-ng-repeat="item in menus.main" ui-route="/{{item.link}}" ng-class="{active: $uiRoute}">
           <a mean-token="item.link" ui-sref='{{item.link}}'>{{item.title}}</a>
       </li>

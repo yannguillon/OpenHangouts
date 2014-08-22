@@ -16,6 +16,8 @@ for (var index in window.modules) {
     packageModules.push(window.modules[index].module);
 }
 
+
+
 // Default modules
 var modules = ['ngCookies', 'ngResource', 'ui.bootstrap', 'ui.router', 'mean.system', 'mean.auth', 'btford.socket-io'];
 modules = modules.concat(packageModules);
