@@ -72,11 +72,24 @@ module.exports = function(io) {
             socket.emit('connect', true);
         }
 
+        socket.on('delete-channel', function (channels) {
+            for (var key in channels)
+                delete channels[key];
+        });
+
+        socket.on('disconnect', function (channel) {
+            if (initiatorChannel) {
+                delete channels[initiatorChannel];
+            }
+        });
+
         socket.on('new-channel', function (data) {
             if (!channels[data.channel]) {
                 initiatorChannel = data.channel;
             }
             channels[data.channel] = data.channel;
+            console.log('channels state');
+            console.log(channels);
             onNewNamespace(data.channel, data.sender);
         });
 
@@ -104,11 +117,7 @@ module.exports = function(io) {
             socket.emit('presence', isChannelPresent);
         });
 
-        socket.on('disconnect', function (channel) {
-            if (initiatorChannel) {
-                delete channels[initiatorChannel];
-            }
-        });
+
 
 //        socket.on('setPresenter', function(userid){
 //            console.log("presenter switch");
