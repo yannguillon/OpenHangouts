@@ -9,7 +9,7 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
         this.channel = '';
         $scope.randomroom = Math.floor(Math.random()*100000 + 50);
         $scope.definedroom = { id: '' };
-        $scope.roomControl = {started: false, text : "Open a NEW Room"};
+        $scope.roomControl = {started: false, text : 'Open a NEW Room'};
 
         $scope.getRandom = function(){
             return $scope.randomroom;
@@ -18,11 +18,11 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
         $scope.createRoom = function(){
             if ($scope.roomControl.started === false) {
                 WebRTC.createRoom(''+$scope.randomroom);
-                $scope.roomControl = {started: true, text: "Stop current Room"};
+                $scope.roomControl = {started: true, text: 'Stop current Room'};
             }
             else {
                 WebRTC.stopRoom();
-                $scope.roomControl = {started: false, text: "Open a NEW Room"};
+                $scope.roomControl = {started: false, text: 'Open a NEW Room'};
             }
         };
 
