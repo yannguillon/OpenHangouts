@@ -38,6 +38,13 @@ angular.module('mean.system').
             defaultChannel = 'default-channel';
         var connection = new RTCMultiConnection(defaultChannel);
 
+        connection.bandwidth = {
+            audio: 50,
+            video: 50,
+            data: 1638400,
+            screen: 300      // 300kbps
+        };
+
         connection.leaveOnPageUnload = true;
         connection.autoCloseEntireSession = true;
 

@@ -14,8 +14,6 @@
                 <li ng-show="errorsdisplay[key]">{{error}} <button ng-click="hideError(key)">x</button></li>
             </ul>
         </div>
-
-
         <div class="local-video-container" style="position:fixed;bottom: 20px;left:130px;z-index: 999;">
             <video ng-class="{ 'active' : myuser.stream }" style="width:300px" ng-src="{{myuser.stream}}" autoplay muted=true volume=0></video>
 
@@ -38,7 +36,7 @@
                 <!--<div id="video_overlays"></div>-->
                 <!--</div>-->
                 <button style='position: absolute;' ng-show="isPresentingSwitchAllowed()" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
-                <video ng-class="{ 'active' : user.stream }" style="width:90%" ng-src="{{user.stream}}" autoplay></video>
+                <video id="test" ng-class="{ 'active' : user.stream }" style="width:90%" ng-src="{{user.stream}}" autoplay></video>
                 <div style='background-color: black; opacity: 0.6; width: 90%; float: left; margin-top: -5px;'>
                     <span style='float: right; font-size: 1em; color:#E1E1E1; font-variant: small-caps; padding-right: 5px;' ng-show="user.isPresenter"><i class='glyphicon glyphicon-expand'></i> presenting</span>
                     <span style='float: left; font-size: 1em;color:#E1E1E1; font-variant: small-caps; padding-left: 5px;'>{{user.username}}</span>
@@ -66,3 +64,88 @@
 
 
 </section>
+
+<script>
+
+
+    var decodedFrames = 0;
+    var parsedFrames = 0;
+    var paintedFrameCount = 0;
+    var presentedFrames = 0;
+    var paintedFrames = 0;
+    var delaySum = 0;
+    var delayCount = 0;
+    var decodedPerSec = 0;
+    var parsedPerSec = 0;
+    var presentedPerSec = 0;
+    var paintedPerSec = 0;
+
+    function Mean() {
+        this.count = 0;
+        this.sum = 0;
+
+        this.record = function(val) {
+            this.count++;
+            this.sum += val;
+        };
+
+        this.mean = function() {
+            return this.count ? (this.sum / this.count).toFixed(3) : 0;
+        };
+    }
+
+    var delayMean = new Mean();
+    var parpsMean = new Mean();
+    var dedpsMean = new Mean();
+    var prepsMean = new Mean();
+    var pntpsMean = new Mean();
+
+
+    function updateFrameDelayMean() {
+        var v = document.getElementById("test");
+        if (v) {
+            if (v.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA || v.paused) {
+                return;
+            }
+
+            var delay = v.mozFrameDelay;
+            if (v.mozPaintedFrames != paintedFrameCount) {
+                delayMean.record(delay);
+                paintedFrameCount = v.mozPaintedFrames;
+            }
+        }
+    }
+
+    function recalcRates() {
+        var v = document.getElementById("test");
+        if (v) {
+            if (v.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA || v.paused) {
+                return;
+            }
+
+            decodedPerSec = (v.mozDecodedFrames - decodedFrames);
+            decodedFrames = v.mozDecodedFrames;
+
+            parsedPerSec = v.mozParsedFrames - parsedFrames;
+            parsedFrames = v.mozParsedFrames;
+
+            presentedPerSec = v.mozPresentedFrames - presentedFrames;
+            presentedFrames = v.mozPresentedFrames;
+
+            paintedPerSec = v.mozPaintedFrames - paintedFrames;
+            paintedFrames = v.mozPaintedFrames;
+
+            parpsMean.record(parsedPerSec);
+            dedpsMean.record(decodedPerSec);
+            prepsMean.record(presentedPerSec);
+            pntpsMean.record(paintedPerSec);
+
+            console.log(v.mozPaintedFrames);
+        }
+    }
+
+    setInterval(recalcRates, 1000);
+    setInterval(updateFrameDelayMean, 40);
+
+
+</script>
