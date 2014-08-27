@@ -14,7 +14,8 @@ exports.create = function(channel_id) {
     Channel.create({ channel_id: channel_id }, function (err, channel) {
 		if (err)
 			console.log('Error on channel creation');
-		console.log('channel created : ' + channel_id);
+		else
+			console.log('channel created : ' + channel_id);
 	});
 };
 
@@ -32,7 +33,8 @@ exports.delete = function(channel_id) {
 	Channel.find().exec(function (err, channel) {
 		if (err)
 			console.log('Error');
-		console.log(channel.channel_id);
+		else
+			console.log(channel.channel_id);
     });
 };
 
@@ -48,10 +50,13 @@ exports.removeAll = function(){
 exports.findChannel = function(channel_id){
 	console.log('try to find a channel : ' + channel_id);
 	Channel.find({channel_id: channel_id}).exec(function (err, channel) {
-		console.log('channel founded : ' + channel);
-		if (err)
+		if (err){
+			console.log('channel not found');
 			return null;
-		return channel;
+		}else{
+			console.log('channel found : ' + channel);
+			return channel;
+		}
     });
 };
 

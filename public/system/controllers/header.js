@@ -4,9 +4,16 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
     function($scope, $rootScope, Global, Menus) {
         $scope.global = Global;
         $scope.menus = {};
+        if ($scope.global.authenticated){
+            $scope.dashboardMenu = {title: 'Start a conference', href: 'dashboard'};
+        }else{
+            $scope.dashboardMenu = null;
+        }
+
 
         // Default hard coded menu items for main menu
-        var defaultMainMenu = [];
+        var defaultMainMenu = [
+        ];
 
         // Query menus added by modules. Only returns menus that user is allowed to see.
         function queryMenu(name, defaultMenu) {
@@ -19,6 +26,7 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
             });
         }
 
+
         // Query server for menus and check permissions
         queryMenu('main', defaultMainMenu);
 
@@ -27,7 +35,6 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
         $rootScope.$on('loggedin', function() {
 
             queryMenu('main', defaultMainMenu);
-
             $scope.global = {
                 authenticated: !! $rootScope.user,
                 user: $rootScope.user

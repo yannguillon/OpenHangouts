@@ -11,6 +11,8 @@ angular.module('mean.system').controller('DashboardController', ['$scope', 'Glob
         $scope.definedroom = { id: '' };
         $scope.roomControl = {started: false, text : 'Open a NEW Room'};
 
+
+
         $scope.getRandom = function(){
             return $scope.randomroom;
         };

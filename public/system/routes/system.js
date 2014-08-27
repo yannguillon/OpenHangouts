@@ -26,6 +26,7 @@ angular.module('mean.system').config(['$stateProvider', '$urlRouterProvider',
                 return deferred.promise;
             };
 
+
             // states for my app
             $stateProvider
                 .state('home', {

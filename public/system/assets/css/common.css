@@ -68,6 +68,38 @@ footer p {
     margin-top: 140px;
 }
 
+.feedback-button{
+    padding-right: 20px; 
+    padding-left:20px; 
+    padding-bottom: 10px; 
+    padding-top:10px;
+    position: fixed;
+    right:10px;
+    bottom:0; 
+    background-color: #F6A976;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.feedback-button:hover{
+    background-color: #BA845E;
+    color:white;
+}
+
+
+.feedback-button a{
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:#555555;
+}
+
+.feedback-button a:hover{
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:#555555;
+}
 
 /**
     Navbar Properties
