@@ -38,13 +38,6 @@ angular.module('mean.system').
             defaultChannel = 'default-channel';
         var connection = new RTCMultiConnection(defaultChannel);
 
-        connection.bandwidth = {
-            audio: 50,
-            video: 50,
-            data: 1638400,
-            screen: 300      // 300kbps
-        };
-
         connection.leaveOnPageUnload = true;
         connection.autoCloseEntireSession = true;
 
@@ -230,10 +223,12 @@ angular.module('mean.system').
 
         connection.onstreamended = function(e) {
             if (e.isScreen) {
-                if (e.type === 'local') {
+                if (e.type === 'local' && connection.extra.screensharing === true) {
                     connection.extra.screensharing = false;
-                    connection.removeStream(e.streamid);
-                    (connection.streams[e.streamid]).stop();
+                    connection.removeStream({
+                        screen: true,  // remove all screen streams
+                        stop: true // this line is optional; for "stream.stop" to be invoked
+                    });
                     self.screenStream = null;
                 }
                 self.screen = null;
