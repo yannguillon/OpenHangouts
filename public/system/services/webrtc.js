@@ -55,6 +55,13 @@ angular.module('mean.system').
             screensharing: false
         };
 
+
+        connection.bandwidth = {
+            audio: 35,
+            video: 540,
+            data: 1638400
+        };
+
         // Errors detection
 
         connection.DetectRTC.load(function() {

@@ -36,7 +36,7 @@
                 <!--<div id="video_overlays"></div>-->
                 <!--</div>-->
                 <button style='position: absolute;' ng-show="isPresentingSwitchAllowed()" class="switch-presenter" ng-click="video.switchPresenter(user.id)" >set as presenter</button>
-                <video id="test" ng-class="{ 'active' : user.stream }" style="width:90%" ng-src="{{user.stream}}" autoplay></video>
+                <video id="testiii" ng-class="{ 'active' : user.stream }" style="width:90%" ng-src="{{user.stream}}" autoplay></video>
                 <div style='background-color: black; opacity: 0.6; width: 90%; float: left; margin-top: -5px;'>
                     <span style='float: right; font-size: 1em; color:#E1E1E1; font-variant: small-caps; padding-right: 5px;' ng-show="user.isPresenter"><i class='glyphicon glyphicon-expand'></i> presenting</span>
                     <span style='float: left; font-size: 1em;color:#E1E1E1; font-variant: small-caps; padding-left: 5px;'>{{user.username}}</span>
@@ -44,23 +44,62 @@
             </div>
         </div>
 
-        <!--<table  style="border-left: 1px solid black; width: 100%;">-->
-        <!--<tr>-->
-        <!--<td id="local-video-container">-->
-        <!--<h2>Local video container</h2>-->
 
-        <!--</td>-->
-        <!--<td id="remote-videos-container" style="background: white; border-left: 1px solid black;">-->
-        <!--<h2>Remote videos container</h2>-->
-        <!--<div >-->
-
-        <!--</div>-->
-        <!--</td>-->
-        <!--</tr>-->
-        <!--</table>-->
-        <!--<div style="width:100%">-->
-        <!--</div>-->
-        <!--</div>-->
+        <div id="stats"></div>
 
 
+<script>
+
+    $(function(){
+        var decodedFrames = 0,
+        droppedFrames = 0,
+        startTime = new Date().getTime(),
+        initialTime = new Date().getTime();
+
+        window.setInterval(function(){
+            var video = document.getElementById("testiii");
+            console.log(video);
+        //see if webkit stats are available; exit if they aren't
+        if (!video.webkitDecodedFrameCount){
+        console.log("Video FPS calcs not supported");
+        return;
+        }
+        //get the stats
+
+
+            if (video.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA || video.paused) {
+                return;
+            }
+
+        else{
+        var currentTime = new Date().getTime();
+        var deltaTime = (currentTime - startTime) / 1000;
+        var totalTime = (currentTime - initialTime) / 1000;
+        startTime = currentTime;
+            console.log('vid');
+        console.log(video);
+        // Calculate decoded frames per sec.
+        var currentDecodedFPS  = (video.webkitDecodedFrameCount - decodedFrames) / deltaTime;
+        var decodedFPSavg = video.webkitDecodedFrameCount / totalTime;
+        decodedFrames = video.webkitDecodedFrameCount;
+
+        // Calculate dropped frames per sec.
+        var currentDroppedFPS = (video.webkitDroppedFrameCount - droppedFrames) / deltaTime;
+        var droppedFPSavg = video.webkitDroppedFrameCount / totalTime;
+        droppedFrames = video.webkitDroppedFrameCount;
+
+        //write the results to a table
+
+
+        $("#stats")[0].innerHTML =
+        "<table><tr><th>Type</th><th>Total</th><th>Avg</th><th>Current</th></tr>" +
+        "<tr><td>Decoded</td><td>" + decodedFrames + "</td><td>" + decodedFPSavg.toFixed() + "</td><td>" + currentDecodedFPS.toFixed()+ "</td></tr>" +
+        "<tr><td>Dropped</td><td>" + droppedFrames + "</td><td>" + droppedFPSavg.toFixed() + "</td><td>" + currentDroppedFPS.toFixed() + "</td></tr>" +
+        "<tr><td>All</td><td>" + (decodedFrames + droppedFrames) + "</td><td>" + (decodedFPSavg + droppedFPSavg).toFixed() + "</td><td>" + (currentDecodedFPS + currentDroppedFPS).toFixed() + "</td></tr></table>" +
+        "Camera resolution: " + video.videoWidth + " x " + video.videoHeight;
+        }
+        }, 1000);
+    });
+
+</script>
 </section>
